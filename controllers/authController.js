@@ -1,6 +1,9 @@
 const User = require('../models/User')
 const {StatusCodes} = require('http-status-codes')
 const CustomError = require('../errors')
+const jwt = require('jsonwebtoken')
+const passport = require('passport')
+
 const register = async (req, res) => {
     const {email, name, password} = req.body
     const ifEmailExist = await User.findOne({email})
@@ -21,8 +24,18 @@ const logout = async(req, res) => {
     res.send('logout')
 }
 
+const RedirectGoogle = async(req, res)=>{
+    res.send('redirect')
+}
+
+const RedirectGithub = async(req, res)=>{
+    res.send('redirect')
+}
+
 module.exports = {
     register,
     login,
-    logout
+    logout,
+    RedirectGoogle,
+    RedirectGithub
 }

@@ -11,6 +11,15 @@ const connectDB = require('./db/connect')
 // router
 const authRouter = require('./routes/authRoute')
 
+// cookie
+const cookieSession = require('cookie-session')
+
+// passport
+// const passport = require('passport')
+
+const initPassport = require('./strategies/local-strategy')
+// app.use(passport.initialize())
+
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require('./middlewares/not-found')
