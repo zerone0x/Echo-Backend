@@ -8,6 +8,9 @@ const morgan = require('morgan')
 // db 
 const connectDB = require('./db/connect')
 
+// router
+const authRouter = require('./routes/authRoute')
+
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require('./middlewares/not-found')
@@ -23,6 +26,7 @@ app.get('/', (req, res)=>{
     res.send('hi')
 })
 
+app.use('/api/v1/auth', authRouter)
 
 const Port = process.env.PORT || 3000;
 const start = async() => {
