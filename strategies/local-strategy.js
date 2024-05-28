@@ -46,4 +46,17 @@ passport.use(new GithubStrategy({
 }, (accessToken, refreshToken, profile, done)=>{
     // it will execute before redirect 
     console.log(profile)
+    User.findOne({githubId: profile.id}).then((currUser)=>{
+        if(currUser){
+            done(null, currUser)
+        }
+    })
+    User.create({
+        githubId: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+    }).then((user) => {
+        console.log(user)
+        done(null, user)
+    })
 }))

@@ -3,32 +3,36 @@ require('dotenv').config();
 require('express-async-errors')
 const express = require('express');
 const app = express();
-
+const passport = require('passport')
 const morgan = require('morgan')
-// db 
 const connectDB = require('./db/connect')
-
-// router
 const authRouter = require('./routes/authRoute')
+const cookieParser = require('cookie-parser')
+const expressSession = require('express-session')
 
-// cookie
-const cookieSession = require('cookie-session')
-
-// passport
-// const passport = require('passport')
-
-const initPassport = require('./strategies/local-strategy')
+// // passport
 // app.use(passport.initialize())
+// app.use(passport.session())
+const initPassport = require('./strategies/local-strategy')
 
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require('./middlewares/not-found')
-const errorMiddleware = require('./middlewares/error-handler')
+const errorMiddleware = require('./middlewares/error-handler');
+
+app.use(expressSession({
+    secret: process.env.SESSION_KEY,
+    cookie: {
+        maxAge: 3000
+    },
+    saveUninitialized: false,
+}))
 
 // log the requests
 app.use(morgan('tiny'))
 // convert json data to object
 app.use(express.json());
+app.use(cookieParser(process.env.JWT_SECRET))
 
 // routes
 app.get('/', (req, res)=>{
