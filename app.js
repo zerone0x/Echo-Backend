@@ -7,9 +7,10 @@ const passport = require('passport')
 const morgan = require('morgan')
 const connectDB = require('./db/connect')
 const authRouter = require('./routes/authRoute')
+const userRouter = require('./routes/userRoute')
 const cookieParser = require('cookie-parser')
 const expressSession = require('express-session')
-
+// const cors = require('cors')
 // // passport
 // app.use(passport.initialize())
 // app.use(passport.session())
@@ -33,6 +34,7 @@ app.use(morgan('tiny'))
 // convert json data to object
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET))
+// app.use(cors)
 
 // routes
 app.get('/', (req, res)=>{
@@ -40,6 +42,7 @@ app.get('/', (req, res)=>{
 })
 
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/users', userRouter)
 
 const Port = process.env.PORT || 3000;
 const start = async() => {
