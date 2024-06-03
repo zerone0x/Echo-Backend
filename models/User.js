@@ -13,32 +13,75 @@ const UserSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: [true, 'Please provide email'],
-        vallidate:{
+        validate:{
             validator: validator.isEmail,
             message: 'Please provide a valid email',
         }
     },
     password:{
         type: String,
-        required: [true, 'Please provide password'],
+        // required: [true, 'Please provide password'],
         minlength: 6,
     },
     role:{
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
-    }
+    },
+    googleId:{
+        type: String
+    },
+    githubId:{
+        type: String
+    },
+    CreatedAt: {
+        type: Date,
+        default: Date.now
+    },
+    // Followers: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User'
+    // }],
+    // Following: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User'
+    // }],
+    // LikedPosts: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Post'
+    // }],
+    // LikedComments: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Comment'
+    // }],
+    // ProfilePic: {
+    //     type: String,
+    //     default: 'default.jpg'
+    // },
+    // Bio: {
+    //     type: String,
+    //     default: ''
+    // }
 
 });
 
 
 UserSchema.pre('save', async function(){
+    if(this.googleId || this.githubId){
+        return
+    }
+    if(!this.isModified('password')){
+        return
+    }
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
 })
 
-UserSchema.methods.comparePassword = async function(candidatePassword){
-    const isMatch = await bcrypt.compare(this.password, candidatePassword)
+UserSchema.methods.comparePassword = async function(Password){
+    if(this.googleId || this.githubId){
+        return
+    }
+    const isMatch = await bcrypt.compare(Password, this.password)
     return isMatch
 }
 
