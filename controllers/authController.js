@@ -1,8 +1,9 @@
 const User = require('../models/User')
 const {StatusCodes} = require('http-status-codes')
 const CustomError = require('../errors')
-const {attachCookiesToResponse} = require('../utils/index')
+const {attachCookiesToResponse, createTokenUser} = require('../utils/index')
 const passport = require('passport')
+
 
 const register = async (req, res) => {
     const {email, name, password} = req.body
@@ -13,7 +14,7 @@ const register = async (req, res) => {
     const isFirstUser = (await User.countDocuments({})) === 0
     const role = isFirstUser ? 'admin' : 'user'
     const user = await User.create({email, name, password, role})
-    const tokenUser = {name: user.name, email: user.email, role: user.role}
+    const tokenUser = createTokenUser(user)
     attachCookiesToResponse({res, user: tokenUser})
     res.status(StatusCodes.CREATED).json({user: user, tokenUser})
 }
@@ -24,7 +25,6 @@ const login = async(req, res) => {
         throw new CustomError.BadRequestError('Please provide email and password')
     }
     const user = await User.findOne({email})
-    console.log(user);
     if(!user){
         throw new CustomError.UnauthenticatedError('Invalid Credentials of useremail')
     }
@@ -32,7 +32,7 @@ const login = async(req, res) => {
     if(!isMatch){
         throw new CustomError.UnauthenticatedError('Invalid Credentials of password')
     }
-    const tokenUser = {name: user.name, email: user.email, role: user.role}
+    const tokenUser = createTokenUser(user)
     attachCookiesToResponse({res, user: tokenUser})
     res.status(StatusCodes.CREATED).json({user: user, tokenUser})
     
