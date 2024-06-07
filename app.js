@@ -46,7 +46,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 
-const Port = process.env.PORT || 3000;
+const Port = process.env.PORT || 3007;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);

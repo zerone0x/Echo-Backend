@@ -2,67 +2,71 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Please provide name"],
-    minlength: 3,
-    maxlength: 50,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: [true, "Please provide email"],
-    validate: {
-      validator: validator.isEmail,
-      message: "Please provide a valid email",
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please provide name"],
+      minlength: 3,
+      maxlength: 50,
     },
+    email: {
+      type: String,
+      unique: true,
+      required: [true, "Please provide email"],
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide a valid email",
+      },
+    },
+    password: {
+      type: String,
+      // required: [true, 'Please provide password'],
+      minlength: 6,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+    googleId: {
+      type: String,
+    },
+    githubId: {
+      type: String,
+    },
+    Gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      required: [true, "Please choose your gender"],
+    },
+    // Followers: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User'
+    // }],
+    // Following: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User'
+    // }],
+    // LikedPosts: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Post'
+    // }],
+    // LikedComments: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Comment'
+    // }],
+    ProfileImage: {
+      type: String,
+      default: "/uploads/xx.jpeg",
+    },
+    // Bio: {
+    //     type: String,
+    //     default: ''
+    // }
   },
-  password: {
-    type: String,
-    // required: [true, 'Please provide password'],
-    minlength: 6,
-  },
-  role: {
-    type: String,
-    enum: ["admin", "user"],
-    default: "user",
-  },
-  googleId: {
-    type: String,
-  },
-  githubId: {
-    type: String,
-  },
-  CreatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-  // Followers: [{
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'User'
-  // }],
-  // Following: [{
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'User'
-  // }],
-  // LikedPosts: [{
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Post'
-  // }],
-  // LikedComments: [{
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Comment'
-  // }],
-  // ProfilePic: {
-  //     type: String,
-  //     default: 'default.jpg'
-  // },
-  // Bio: {
-  //     type: String,
-  //     default: ''
-  // }
-});
+  { timestamps: true },
+);
 
 UserSchema.pre("save", async function () {
   if (this.googleId || this.githubId) {
