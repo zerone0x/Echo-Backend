@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema(
     Gender: {
       type: String,
       enum: ["Male", "Female", "Other"],
-      required: [true, "Please choose your gender"],
+      // required: [true, "Please choose your gender"],
     },
     // Followers: [{
     //     type: mongoose.Schema.Types.ObjectId,
@@ -58,7 +58,7 @@ const UserSchema = new mongoose.Schema(
     // }],
     ProfileImage: {
       type: String,
-      default: "/uploads/xx.jpeg",
+      default: "/uploads/default.jpeg",
     },
     // Bio: {
     //     type: String,

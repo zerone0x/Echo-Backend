@@ -8,8 +8,11 @@ const morgan = require("morgan");
 const connectDB = require("./db/connect");
 const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
+const feedRouter = require("./routes/feedRoute");
+const commentRouter= require("./routes/commentRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
+const fileUpload = require('express-fileupload')
 const cors = require("cors");
 // // passport
 // app.use(passport.initialize())
@@ -38,6 +41,9 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser(process.env.JWT_SECRET));
 
+app.use(express.static('./public'))
+app.use(fileUpload())
+
 // routes
 app.get("/", (req, res) => {
   res.send("hi");
@@ -45,6 +51,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/feeds", feedRouter);
+app.use("/api/v1/comments", commentRouter);
 
 const Port = process.env.PORT || 3007;
 const start = async () => {
