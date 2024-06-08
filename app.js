@@ -9,10 +9,10 @@ const connectDB = require("./db/connect");
 const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
 const feedRouter = require("./routes/feedRoute");
-const commentRouter= require("./routes/commentRoute");
+const commentRouter = require("./routes/commentRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
-const fileUpload = require('express-fileupload')
+const fileUpload = require("express-fileupload");
 const cors = require("cors");
 // // passport
 // app.use(passport.initialize())
@@ -41,8 +41,8 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser(process.env.JWT_SECRET));
 
-app.use(express.static('./public'))
-app.use(fileUpload())
+app.use(express.static("./public"));
+app.use(fileUpload());
 
 // routes
 app.get("/", (req, res) => {

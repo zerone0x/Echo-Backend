@@ -13,15 +13,13 @@ const CommentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    feed:{
-        type: mongoose.Types.ObjectId,
-        ref: "Feed",
-        required: true,
-    }
+    feed: {
+      type: mongoose.Types.ObjectId,
+      ref: "Feed",
+      required: true,
+    },
   },
   { timestamps: true },
 );
-
-
 
 module.exports = mongoose.model("Comment", CommentSchema);

@@ -14,25 +14,31 @@ const FeedsSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true }},
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
-FeedsSchema.virtual('comments',{
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'feed',
+FeedsSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "feed",
   justOne: false,
-})
-
-FeedsSchema.pre('deleteOne', { document: false, query: true }, async function(next) {
-  const query = this.getQuery();
-  const feedId = query._id; 
-  if (feedId) {
-    await mongoose.model('Comment').deleteMany({ feed: feedId });
-  }
-  next();
 });
 
-
+FeedsSchema.pre(
+  "deleteOne",
+  { document: false, query: true },
+  async function (next) {
+    const query = this.getQuery();
+    const feedId = query._id;
+    if (feedId) {
+      await mongoose.model("Comment").deleteMany({ feed: feedId });
+    }
+    next();
+  },
+);
 
 module.exports = mongoose.model("Feed", FeedsSchema);
