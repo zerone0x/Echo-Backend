@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const path = require("path");
 const { checkPermissions } = require("../utils");
+const { sendSuccess } = require("../utils/FormatResponse");
 
 const createComments = async (req, res) => {
   req.body.user = req.user.userId;
@@ -14,7 +15,12 @@ const createComments = async (req, res) => {
     throw new CustomError.NotFoundError("Feed not found");
   }
   const comments = await Comment.create(req.body);
-  res.status(StatusCodes.CREATED).json({ comments });
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    comments,
+    "Your comment created successfully",
+  );
 };
 
 const getAllComments = async (req, res) => {
@@ -22,7 +28,13 @@ const getAllComments = async (req, res) => {
     path: "feed",
     select: "content",
   });
-  res.status(StatusCodes.OK).json({ comments, count: comments.length });
+  const resComment = { comments: comments, count: comments.length };
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    resComment,
+    "All comments fetched successfully",
+  );
 };
 
 const getCommentById = async (req, res) => {
@@ -30,7 +42,12 @@ const getCommentById = async (req, res) => {
   if (!comment) {
     throw new CustomError.NotFoundError("Comment not found");
   }
-  res.status(StatusCodes.OK).json({ comment });
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    comment,
+    "Your comment fetched successfully",
+  );
 };
 
 const deleteCommentById = async (req, res) => {
@@ -40,7 +57,7 @@ const deleteCommentById = async (req, res) => {
   }
   checkPermissions(req.user, comment.user);
   await comment.deleteOne();
-  res.status(StatusCodes.OK).json({ msg: "Comment deleted successfully" });
+  sendSuccess(res, StatusCodes.OK, null, "Your Comment deleted successfully");
 };
 
 module.exports = {

@@ -3,6 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { attachCookiesToResponse, createTokenUser } = require("../utils/index");
 const passport = require("passport");
+const { sendSuccess } = require("../utils/FormatResponse");
 
 const register = async (req, res) => {
   const { email, name, password } = req.body;
@@ -15,7 +16,13 @@ const register = async (req, res) => {
   const user = await User.create({ email, name, password, role });
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.CREATED).json({ user: user, tokenUser });
+  const resUser = { user: user, tokenUser: tokenUser };
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    resUser,
+    "Your account registered successfully",
+  );
 };
 
 const login = async (req, res) => {
@@ -25,9 +32,7 @@ const login = async (req, res) => {
   }
   const user = await User.findOne({ email });
   if (!user) {
-    throw new CustomError.UnauthenticatedError(
-      "Invalid Credentials of useremail",
-    );
+    throw new CustomError.UnauthenticatedError("Invalid Credentials of email");
   }
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
@@ -37,7 +42,8 @@ const login = async (req, res) => {
   }
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.CREATED).json({ user: user, tokenUser });
+  const resUser = { user: user, tokenUser: tokenUser };
+  sendSuccess(res, StatusCodes.CREATED, resUser, "Login successfully");
 };
 
 const logout = async (req, res) => {
@@ -47,7 +53,7 @@ const logout = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     signed: true,
   });
-  res.status(StatusCodes.OK).json({ msg: "Logout successfully" });
+  sendSuccess(res, StatusCodes.OK, null, "Logout successfully");
 };
 
 const RedirectGoogle = async (req, res) => {

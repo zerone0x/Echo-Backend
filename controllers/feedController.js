@@ -3,16 +3,27 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const path = require("path");
 const { checkPermissions } = require("../utils");
+const { sendSuccess } = require("../utils/FormatResponse");
 
 const createFeeds = async (req, res) => {
   req.body.user = req.user.userId;
   const feeds = await Feeds.create(req.body);
-  res.status(StatusCodes.CREATED).json(feeds);
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    feeds,
+    "Your feed created successfully",
+  );
 };
 
 const getAllFeeds = async (req, res) => {
   const AllFeeds = await Feeds.find({});
-  res.status(StatusCodes.OK).json({ AllFeeds });
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    AllFeeds,
+    "All feeds fetched successfully",
+  );
 };
 
 const getFeedById = async (req, res) => {
@@ -20,9 +31,10 @@ const getFeedById = async (req, res) => {
   if (!feed) {
     throw new CustomError.NotFoundError("Feed not found");
   }
-  res.status(StatusCodes.OK).json({ feed });
+  sendSuccess(res, StatusCodes.OK, feed, "Your feed fetched successfully");
 };
 
+// TODO delete maybe no need to use it
 const updateFeedById = async (req, res) => {
   res.send("update by id");
 };
@@ -34,7 +46,7 @@ const deleteFeedById = async (req, res) => {
   }
   checkPermissions(req.user, feed.user);
   await feed.deleteOne();
-  res.status(StatusCodes.OK).json({ msg: "Feed deleted successfully" });
+  sendSuccess(res, StatusCodes.OK, null, "Your feed deleted successfully");
 };
 
 const searchFeeds = async (req, res) => {
@@ -59,12 +71,8 @@ const uploadImage = async (req, res) => {
     `../public/uploads/${FeedsImage.name}`,
   );
   await FeedsImage.mv(imagePath);
-  res
-    .status(StatusCodes.OK)
-    .json({
-      msg: "Image Uploaded successfully",
-      image: `/uploads/${FeedsImage.name}`,
-    });
+  const image = { image: `/uploads/${FeedsImage.name}` };
+  sendSuccess(res, StatusCodes.OK, image, "Your Image uploaded successfully");
 };
 
 module.exports = {
