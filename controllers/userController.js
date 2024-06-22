@@ -14,6 +14,29 @@ const getAllUsers = async (req, res) => {
   res.status(StatusCodes.OK).json({ users });
 };
 
+const addFollowers = async (req, res) => {
+  const followerId = req.user.userId;
+  const { idolId } = req.body;
+  if (idolId === followerId) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "You can't follow yourself" });
+  }
+  const user = await User.findById(idolId);
+  if (!user.Followers.includes(followerId)) {
+    user.Followers.push(followerId);
+    await user.save();
+  }
+  const follower = await User.findById(followerId);
+  if (!follower.Following.includes(idolId)) {
+    follower.Following.push(idolId);
+    await follower.save();
+  }
+  res.status(StatusCodes.OK).json({ msg: "Success! Followers Added." });
+};
+
+const RemoveFollowers = async (req, res) => {};
+
 const getSingleUser = async (req, res) => {
   const user = await User.findById(req.params.id).select("-password");
   if (!user) {
@@ -24,7 +47,13 @@ const getSingleUser = async (req, res) => {
 };
 
 const showCurrUser = async (req, res) => {
-  res.status(StatusCodes.OK).json({ user: req.user });
+  const currUser = { user: req.user };
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    currUser,
+    "Your currUser fetched successfully",
+  );
 };
 
 const updateUser = async (req, res) => {
@@ -66,5 +95,7 @@ module.exports = {
   getSingleUser,
   showCurrUser,
   updateUser,
+  addFollowers,
+  RemoveFollowers,
   updateUserPwd,
 };

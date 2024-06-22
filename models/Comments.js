@@ -22,4 +22,17 @@ const CommentSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// CommentSchema.statics.calculateCommentLen = async function (feed) {
+//   console.log(feed);
+// }
+
+// CommentSchema.post('save', async function(){
+//   await this.constructor.calculateCommentLen(this.feed)
+//   console.log('save');
+// })
+
+// CommentSchema.post('remove', async function(){
+//   console.log('remove');
+// })
+
 module.exports = mongoose.model("Comment", CommentSchema);

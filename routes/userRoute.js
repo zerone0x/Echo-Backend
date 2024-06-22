@@ -6,6 +6,7 @@ const {
   showCurrUser,
   updateUser,
   updateUserPwd,
+  addFollowers,
 } = require("../controllers/userController");
 const {
   authenticateUser,
@@ -19,6 +20,7 @@ router
 router.route("/showMe").get(authenticateUser, showCurrUser);
 router.route("/updateUser").patch(authenticateUser, updateUser);
 router.route("/updateUserPwd").patch(authenticateUser, updateUserPwd);
+router.route("/addFollowers").patch(authenticateUser, addFollowers);
 router.route("/:id").get(authenticateUser, getSingleUser);
 
 module.exports = router;

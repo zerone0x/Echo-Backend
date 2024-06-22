@@ -40,14 +40,20 @@ const UserSchema = new mongoose.Schema(
       enum: ["Male", "Female", "Other"],
       // required: [true, "Please choose your gender"],
     },
-    // Followers: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }],
-    // Following: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }],
+    Followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    Following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     // LikedPosts: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Post'

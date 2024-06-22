@@ -17,7 +17,10 @@ const createFeeds = async (req, res) => {
 };
 
 const getAllFeeds = async (req, res) => {
-  const AllFeeds = await Feeds.find({});
+  const AllFeeds = await Feeds.find({}).populate({
+    path: "user",
+    select: "-password",
+  });
   sendSuccess(
     res,
     StatusCodes.CREATED,
@@ -32,6 +35,13 @@ const getFeedById = async (req, res) => {
     throw new CustomError.NotFoundError("Feed not found");
   }
   sendSuccess(res, StatusCodes.OK, feed, "Your feed fetched successfully");
+};
+
+const getFeedByUserId = async (req, res) => {
+  const feeds = await Feeds.find({ user: req.params.userId }).populate(
+    "comments",
+  );
+  sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
 };
 
 // TODO delete maybe no need to use it
@@ -79,6 +89,7 @@ module.exports = {
   createFeeds,
   getAllFeeds,
   getFeedById,
+  getFeedByUserId,
   updateFeedById,
   deleteFeedById,
   uploadImage,
