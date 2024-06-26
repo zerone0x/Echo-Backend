@@ -17,12 +17,13 @@ const register = async (req, res) => {
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   const resUser = { user: user, tokenUser: tokenUser };
-  sendSuccess(
-    res,
-    StatusCodes.CREATED,
-    resUser,
-    "Your account registered successfully",
-  );
+  // sendSuccess(
+  //   res,
+  //   StatusCodes.CREATED,
+  //   resUser,
+  //   "Your account registered successfully",
+  // );
+  res.redirect(process.env.FE_URL);
 };
 
 const login = async (req, res) => {
@@ -43,7 +44,32 @@ const login = async (req, res) => {
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   const resUser = { user: user, tokenUser: tokenUser };
-  sendSuccess(res, StatusCodes.CREATED, resUser, "Login successfully");
+  // sendSuccess(res, StatusCodes.CREATED, resUser, "Login successfully");
+  res.redirect(process.env.FE_URL);
+};
+
+const RedirectGoogle = (req, res) => {
+  const user = req.user;
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  const resUser = { user: user, tokenUser: tokenUser };
+  if (user) {
+    res.redirect(process.env.FE_URL);
+  } else {
+    res.send(req.user);
+  }
+};
+
+const RedirectGithub = async (req, res) => {
+  const user = req.user;
+  const tokenUser = createTokenUser(user);
+  attachCookiesToResponse({ res, user: tokenUser });
+  const resUser = { user: user, tokenUser: tokenUser };
+  if (user) {
+    res.redirect(process.env.FE_URL);
+  } else {
+    res.send(req.user);
+  }
 };
 
 const logout = async (req, res) => {
@@ -54,14 +80,6 @@ const logout = async (req, res) => {
     signed: true,
   });
   sendSuccess(res, StatusCodes.OK, null, "Logout successfully");
-};
-
-const RedirectGoogle = async (req, res) => {
-  res.send(req.user);
-};
-
-const RedirectGithub = async (req, res) => {
-  res.send(req.user);
 };
 
 module.exports = {

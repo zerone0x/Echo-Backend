@@ -1,9 +1,10 @@
 const Feeds = require("../models/Feeds");
+const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const path = require("path");
 const { checkPermissions } = require("../utils");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 
 const createFeeds = async (req, res) => {
   req.body.user = req.user.userId;
@@ -17,6 +18,9 @@ const createFeeds = async (req, res) => {
 };
 
 const getAllFeeds = async (req, res) => {
+  // let {cursor, limit=10} = req.query;
+  // limit = parseInt(limit, 10);
+
   const AllFeeds = await Feeds.find({}).populate({
     path: "user",
     select: "-password",
@@ -30,11 +34,24 @@ const getAllFeeds = async (req, res) => {
 };
 
 const getFeedById = async (req, res) => {
-  const feed = await Feeds.findById(req.params.id).populate("comments");
-  if (!feed) {
-    throw new CustomError.NotFoundError("Feed not found");
+  try {
+    const feed = await Feeds.findById(req.params.id).populate([
+      {
+        path: "user",
+        select: "-password",
+      },
+      {
+        path: "comments",
+      },
+    ]);
+    // if (!feed) {
+    //   sendFail(res, StatusCodes.NOT_FOUND, null, "Feed not found");
+    //   return;
+    // }
+    sendSuccess(res, StatusCodes.OK, feed, "Your feed fetched successfully");
+  } catch (error) {
+    sendFail(res, StatusCodes.NOT_FOUND, null, error.message);
   }
-  sendSuccess(res, StatusCodes.OK, feed, "Your feed fetched successfully");
 };
 
 const getFeedByUserId = async (req, res) => {
@@ -42,6 +59,25 @@ const getFeedByUserId = async (req, res) => {
     "comments",
   );
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
+};
+
+const getFeedByUsername = async (req, res) => {
+  // try {
+  console.log(req.params.username);
+  const user = await User.findOne({ name: req.params.username });
+  const feeds = await Feeds.find({ user: user._id }).populate([
+    {
+      path: "user",
+      select: "-password",
+    },
+    {
+      path: "comments",
+    },
+  ]);
+  sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 // TODO delete maybe no need to use it
@@ -94,4 +130,5 @@ module.exports = {
   deleteFeedById,
   uploadImage,
   searchFeeds,
+  getFeedByUsername,
 };

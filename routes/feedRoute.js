@@ -9,6 +9,7 @@ const {
   uploadImage,
   searchFeeds,
   getFeedByUserId,
+  getFeedByUsername,
 } = require("../controllers/feedController");
 
 const {
@@ -19,7 +20,7 @@ const {
 router.route("/").post([authenticateUser], createFeeds).get(getAllFeeds);
 
 router.route("/uploadImage").post([authenticateUser], uploadImage);
-
+router.route("/user/:username").get(getFeedByUsername);
 router.route("/user/:userId").get(getFeedByUserId);
 
 router

@@ -2,7 +2,7 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const authenticateUser = require("../middlewares/authentication");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const {
   createTokenUser,
   attachCookiesToResponse,
@@ -12,6 +12,17 @@ const {
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
   res.status(StatusCodes.OK).json({ users });
+};
+
+const getUserByName = async (req, res) => {
+  const username = req.params.username;
+  const user = await User.findOne({ role: "user", name: username }).select(
+    "-password",
+  );
+  if (!user) {
+    sendFail(res, StatusCodes.NOT_FOUND, null, "User not found");
+  }
+  sendSuccess(res, StatusCodes.OK, user, "This user fetched successfully");
 };
 
 const addFollowers = async (req, res) => {
@@ -47,11 +58,16 @@ const getSingleUser = async (req, res) => {
 };
 
 const showCurrUser = async (req, res) => {
-  const currUser = { user: req.user };
+  // const currUser = { user: req.user };
+  const token = req.cookies.token;
+  if(!token){
+    throw new CustomError.BadRequestError("Please login or signup");
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
   sendSuccess(
     res,
     StatusCodes.OK,
-    currUser,
+    decoded,
     "Your currUser fetched successfully",
   );
 };
@@ -92,6 +108,7 @@ const updateUserPwd = async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  getUserByName,
   getSingleUser,
   showCurrUser,
   updateUser,

@@ -11,7 +11,16 @@ function sendSuccess(
     error: null,
   });
 }
+function sendFail(res, statusCode, data = null, error = "Request Failed") {
+  res.status(statusCode).json({
+    status: "failed",
+    results: data,
+    message: error,
+    error: error,
+  });
+}
 
 module.exports = {
   sendSuccess,
+  sendFail,
 };
