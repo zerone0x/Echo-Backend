@@ -19,6 +19,7 @@ const attachCookiesToResponse = ({ res, user }) => {
     signed: true,
   });
 };
+
 module.exports = {
   createJWT,
   isTokenValid,

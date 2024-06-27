@@ -7,6 +7,7 @@ const {
   createTokenUser,
   attachCookiesToResponse,
   checkPermissions,
+  isTokenValid,
 } = require("../utils");
 
 const getAllUsers = async (req, res) => {
@@ -59,17 +60,22 @@ const getSingleUser = async (req, res) => {
 
 const showCurrUser = async (req, res) => {
   // const currUser = { user: req.user };
-  const token = req.cookies.token;
-  if(!token){
-    throw new CustomError.BadRequestError("Please login or signup");
+  try {
+    console.log(req);
+    const token = req.signedCookies.token;
+    // if(!token){
+    //   throw new CustomError.BadRequestError("Please login or signup");
+    // }
+    const decoded = isTokenValid(token);
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      decoded,
+      "Your currUser fetched successfully",
+    );
+  } catch (error) {
+    sendFail(res, StatusCodes.UNAUTHORIZED, error.message, error.message);
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET)
-  sendSuccess(
-    res,
-    StatusCodes.OK,
-    decoded,
-    "Your currUser fetched successfully",
-  );
 };
 
 const updateUser = async (req, res) => {

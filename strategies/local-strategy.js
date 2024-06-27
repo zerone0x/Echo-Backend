@@ -3,8 +3,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStragegy = require("passport-google-oauth20").Strategy;
 const GithubStrategy = require("passport-github2").Strategy;
 const User = require("../models/User");
-const { StatusCodes } = require("http-status-codes");
-const CustomError = require("../errors");
 
 passport.serializeUser((user, done) => {
   done(null, user._id);
@@ -35,7 +33,6 @@ passport.use(
         name: profile.displayName,
         email: profile.emails[0].value,
       }).then((user) => {
-        console.log(user);
         done(null, user);
       });
     },
@@ -62,7 +59,6 @@ passport.use(
         name: profile.displayName,
         email: profile.emails[0].value,
       }).then((user) => {
-        console.log(user);
         done(null, user);
       });
     },
