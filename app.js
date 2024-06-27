@@ -30,7 +30,9 @@ app.use(
     cookie: {
       maxAge: 3000,
     },
-    saveUninitialized: false,
+    resave: false, // 强制保存session即使它没有变化
+    saveUninitialized: true, // 强制将未初始化的session保存
+    cookie: { secure: false },
   }),
 );
 

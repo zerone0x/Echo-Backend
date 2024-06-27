@@ -43,8 +43,8 @@ const login = async (req, res) => {
   }
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
+  req.session.user = user;
   const resUser = { user: user, tokenUser: tokenUser };
-  // sendSuccess(res, StatusCodes.CREATED, resUser, "Login successfully");
   res.redirect(process.env.FE_URL);
 };
 
@@ -52,6 +52,8 @@ const RedirectGoogle = (req, res) => {
   const user = req.user;
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
+  req.session.user = user;
+  console.log(req.session.user);
   const resUser = { user: user, tokenUser: tokenUser };
   if (user) {
     res.redirect(process.env.FE_URL);

@@ -9,6 +9,12 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Please provide name"],
       minlength: 3,
       maxlength: 50,
+      unique: true,
+    },
+    username: {
+      type: String,
+      minlength: 3,
+      maxlength: 50,
     },
     email: {
       type: String,
@@ -66,10 +72,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "/uploads/default.jpeg",
     },
-    // Bio: {
-    //     type: String,
-    //     default: ''
-    // }
+    Bio: {
+      type: String,
+      default: "",
+    },
+    Banner: {
+      type: String,
+      default: "/uploads/banner.png",
+    },
   },
   { timestamps: true },
 );
