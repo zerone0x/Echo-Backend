@@ -1,51 +1,72 @@
-const mongoose = require('mongoose');
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
-const UserSchema = new mongoose.Schema({
-    name:{
-        type: String,
-        required: [true, 'Please provide name'],
-        minlength: 3,
-        maxlength: 50
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please provide name"],
+      minlength: 3,
+      maxlength: 50,
+      unique: true,
+      trim: true,
+      validate: {
+      validator: function(v) {
+        return !/\s/.test(v);
+      },
+      message: props => `${props.value} should not contain any spaces` 
+      }
     },
-    email:{
-        type: String,
-        unique: true,
-        required: [true, 'Please provide email'],
-        validate:{
-            validator: validator.isEmail,
-            message: 'Please provide a valid email',
-        }
+    username: {
+      type: String,
+      minlength: 3,
+      maxlength: 50,
     },
-    password:{
-        type: String,
-        // required: [true, 'Please provide password'],
-        minlength: 6,
+    email: {
+      type: String,
+      unique: true,
+      required: [true, "Please provide email"],
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide a valid email",
+      },
     },
-    role:{
-        type: String,
-        enum: ['admin', 'user'],
-        default: 'user'
+    password: {
+      type: String,
+      // required: [true, 'Please provide password'],
+      minlength: 6,
     },
-    googleId:{
-        type: String
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
     },
-    githubId:{
-        type: String
+    googleId: {
+      type: String,
     },
-    CreatedAt: {
-        type: Date,
-        default: Date.now
+    githubId: {
+      type: String,
     },
-    // Followers: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }],
-    // Following: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }],
+    Gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      // required: [true, "Please choose your gender"],
+    },
+    Followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    Following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     // LikedPosts: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Post'
@@ -54,35 +75,39 @@ const UserSchema = new mongoose.Schema({
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Comment'
     // }],
-    // ProfilePic: {
-    //     type: String,
-    //     default: 'default.jpg'
-    // },
-    // Bio: {
-    //     type: String,
-    //     default: ''
-    // }
+    ProfileImage: {
+      type: String,
+      default: "/uploads/default.jpeg",
+    },
+    Bio: {
+      type: String,
+      default: "",
+    },
+    Banner: {
+      type: String,
+      default: "/uploads/banner.png",
+    },
+  },
+  { timestamps: true },
+);
 
+UserSchema.pre("save", async function () {
+  if (this.googleId || this.githubId) {
+    return;
+  }
+  if (!this.isModified("password")) {
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
+UserSchema.methods.comparePassword = async function (Password) {
+  if (this.googleId || this.githubId) {
+    return;
+  }
+  const isMatch = await bcrypt.compare(Password, this.password);
+  return isMatch;
+};
 
-UserSchema.pre('save', async function(){
-    if(this.googleId || this.githubId){
-        return
-    }
-    if(!this.isModified('password')){
-        return
-    }
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
-})
-
-UserSchema.methods.comparePassword = async function(Password){
-    if(this.googleId || this.githubId){
-        return
-    }
-    const isMatch = await bcrypt.compare(Password, this.password)
-    return isMatch
-}
-
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
