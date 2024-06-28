@@ -23,6 +23,7 @@ const initPassport = require("./strategies/local-strategy");
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require("./middlewares/not-found");
 const errorMiddleware = require("./middlewares/error-handler");
+app.use(cors());
 
 app.use(
   expressSession({
@@ -40,7 +41,6 @@ app.use(
 app.use(morgan("tiny"));
 // convert json data to object
 app.use(express.json());
-app.use(cors());
 app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use(express.static("./public"));

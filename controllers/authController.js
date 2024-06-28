@@ -17,13 +17,17 @@ const register = async (req, res) => {
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
   const resUser = { user: user, tokenUser: tokenUser };
-  // sendSuccess(
-  //   res,
-  //   StatusCodes.CREATED,
-  //   resUser,
-  //   "Your account registered successfully",
-  // );
-  res.redirect(process.env.FE_URL);
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    resUser,
+    "Your account registered successfully",
+  );
+  if (user) {
+    res.redirect(process.env.FE_URL);
+  } else {
+    res.send(req.user);
+  }
 };
 
 const login = async (req, res) => {
@@ -45,7 +49,12 @@ const login = async (req, res) => {
   attachCookiesToResponse({ res, user: tokenUser });
   req.session.user = user;
   const resUser = { user: user, tokenUser: tokenUser };
-  res.redirect(process.env.FE_URL);
+  sendSuccess(
+    res,
+    StatusCodes.CREATED,
+    resUser,
+    "Your account registered successfully",
+  );
 };
 
 const RedirectGoogle = (req, res) => {
