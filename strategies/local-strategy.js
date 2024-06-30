@@ -28,8 +28,8 @@ passport.use(
           done(null, currUser);
         }
       });
-      const index = profile.displayName.indexOf('(');
-      const username = profile.displayName.slice(0, index).replace(/\s+/g, '');
+      const index = profile.displayName.indexOf("(");
+      const username = profile.displayName.slice(0, index).replace(/\s+/g, "");
       User.create({
         googleId: profile.id,
         name: username,

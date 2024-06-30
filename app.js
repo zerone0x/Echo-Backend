@@ -25,7 +25,13 @@ const notFoundMiddleware = require("./middlewares/not-found");
 const errorMiddleware = require("./middlewares/error-handler");
 const User = require("./models/User");
 const Feeds = require("./models/Feeds");
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FE_ORIGIN,
+  credentials: true,
+  optionsSuccessStatus: 200,
+  allowedHeaders: ["Authorization", "Content-Type"], // Explicitly allow these headers
+};
+app.use(cors(corsOptions));
 
 app.use(
   expressSession({
@@ -33,7 +39,7 @@ app.use(
     cookie: {
       maxAge: 3000,
     },
-    resave: false, 
+    resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
   }),
