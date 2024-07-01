@@ -24,7 +24,7 @@ const getAllFeeds = async (req, res) => {
   const AllFeeds = await Feeds.find({}).populate({
     path: "user",
     select: "-password",
-  });
+  }).sort({ createdAt: -1 });
   sendSuccess(
     res,
     StatusCodes.CREATED,
@@ -43,7 +43,7 @@ const getFeedById = async (req, res) => {
       {
         path: "comments",
       },
-    ]);
+    ]).sort({ createdAt: -1 });
     // if (!feed) {
     //   sendFail(res, StatusCodes.NOT_FOUND, null, "Feed not found");
     //   return;
@@ -57,7 +57,7 @@ const getFeedById = async (req, res) => {
 const getFeedByUserId = async (req, res) => {
   const feeds = await Feeds.find({ user: req.params.userId }).populate(
     "comments",
-  );
+  ).sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
 };
 
@@ -73,7 +73,7 @@ const getFeedByUsername = async (req, res) => {
     {
       path: "comments",
     },
-  ]);
+  ]).sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
   // } catch (error) {
   //   console.log(error);
