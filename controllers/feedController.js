@@ -21,10 +21,12 @@ const getAllFeeds = async (req, res) => {
   // let {cursor, limit=10} = req.query;
   // limit = parseInt(limit, 10);
 
-  const AllFeeds = await Feeds.find({}).populate({
-    path: "user",
-    select: "-password",
-  }).sort({ createdAt: -1 });
+  const AllFeeds = await Feeds.find({})
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .sort({ createdAt: -1 });
   sendSuccess(
     res,
     StatusCodes.CREATED,
@@ -35,15 +37,17 @@ const getAllFeeds = async (req, res) => {
 
 const getFeedById = async (req, res) => {
   try {
-    const feed = await Feeds.findById(req.params.id).populate([
-      {
-        path: "user",
-        select: "-password",
-      },
-      {
-        path: "comments",
-      },
-    ]).sort({ createdAt: -1 });
+    const feed = await Feeds.findById(req.params.id)
+      .populate([
+        {
+          path: "user",
+          select: "-password",
+        },
+        {
+          path: "comments",
+        },
+      ])
+      .sort({ createdAt: -1 });
     // if (!feed) {
     //   sendFail(res, StatusCodes.NOT_FOUND, null, "Feed not found");
     //   return;
@@ -55,9 +59,9 @@ const getFeedById = async (req, res) => {
 };
 
 const getFeedByUserId = async (req, res) => {
-  const feeds = await Feeds.find({ user: req.params.userId }).populate(
-    "comments",
-  ).sort({ createdAt: -1 });
+  const feeds = await Feeds.find({ user: req.params.userId })
+    .populate("comments")
+    .sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
 };
 
@@ -65,15 +69,17 @@ const getFeedByUsername = async (req, res) => {
   // try {
   console.log(req.params.username);
   const user = await User.findOne({ name: req.params.username });
-  const feeds = await Feeds.find({ user: user._id }).populate([
-    {
-      path: "user",
-      select: "-password",
-    },
-    {
-      path: "comments",
-    },
-  ]).sort({ createdAt: -1 });
+  const feeds = await Feeds.find({ user: user._id })
+    .populate([
+      {
+        path: "user",
+        select: "-password",
+      },
+      {
+        path: "comments",
+      },
+    ])
+    .sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
   // } catch (error) {
   //   console.log(error);
@@ -130,5 +136,7 @@ module.exports = {
   deleteFeedById,
   uploadImage,
   searchFeeds,
+  bookmarkFeeds,
+  getAllBookMarks,
   getFeedByUsername,
 };

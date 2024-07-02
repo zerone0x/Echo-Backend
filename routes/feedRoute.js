@@ -8,6 +8,8 @@ const {
   deleteFeedById,
   uploadImage,
   searchFeeds,
+  bookmarkFeeds,
+  getAllBookMarks,
   getFeedByUserId,
   getFeedByUsername,
 } = require("../controllers/feedController");
@@ -22,6 +24,9 @@ router.route("/").post([authenticateUser], createFeeds).get(getAllFeeds);
 router.route("/uploadImage").post([authenticateUser], uploadImage);
 router.route("/user/:username").get(getFeedByUsername);
 router.route("/user/:userId").get(getFeedByUserId);
+// reaction
+router.route("/bookmark").post([authenticateUser], bookmarkFeeds);
+router.route("/bookmark").get([authenticateUser], getAllBookMarks);
 
 router
   .route("/:id")
