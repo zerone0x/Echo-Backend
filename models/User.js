@@ -67,14 +67,6 @@ const UserSchema = new mongoose.Schema(
         default: [],
       },
     ],
-    // LikedPosts: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Post'
-    // }],
-    // LikedComments: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Comment'
-    // }],
     ProfileImage: {
       type: String,
       default: "/uploads/default.jpeg",

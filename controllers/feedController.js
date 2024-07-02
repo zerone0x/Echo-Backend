@@ -136,7 +136,5 @@ module.exports = {
   deleteFeedById,
   uploadImage,
   searchFeeds,
-  bookmarkFeeds,
-  getAllBookMarks,
   getFeedByUsername,
 };
