@@ -11,7 +11,7 @@ const {
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router.route("/AddFollow").post([authenticateUser], AddFollowing);
-router.route("/getFollow").get([authenticateUser], getFollowing);
-router.route("/getFans").get([authenticateUser], getFans);
+router.route("/AddFollow/").post([authenticateUser], AddFollowing);
+router.route("/getFollow/:username").get(getFollowing);
+router.route("/getFans/:username").get(getFans);
 module.exports = router;

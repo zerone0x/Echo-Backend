@@ -69,7 +69,6 @@ const getFeedByUserId = async (req, res) => {
 
 const getFeedByUsername = async (req, res) => {
   // try {
-  console.log(req.params.username);
   const user = await User.findOne({ name: req.params.username });
   const feeds = await Feeds.find({ user: user._id })
     .populate([

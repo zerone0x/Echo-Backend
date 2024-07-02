@@ -8,7 +8,8 @@ const { sendSuccess } = require("../utils/FormatResponse");
 const AddFollowing = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const idolId = req.body.idolId;
+    const idol = await User.findOne({ name: req.body.idolName });
+    const idolId = idol._id;
     if (userId === idolId) {
       throw new CustomError.BadRequestError("You cannot follow yourself");
     }
@@ -48,8 +49,8 @@ const AddFollowing = async (req, res) => {
 
 const getFollowing = async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const following = await Follow.find({ follower: userId }).populate([
+    const user = await User.findOne({ name: req.params.username });
+    const following = await Follow.find({ follower: user._id }).populate([
       {
         path: "followed",
         select: "-password -email",
@@ -74,8 +75,8 @@ const getFollowing = async (req, res) => {
 
 const getFans = async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const followedPpl = await Follow.find({ followed: userId }).populate([
+    const user = await User.findOne({ name: req.params.username });
+    const followedPpl = await Follow.find({ followed: user._id }).populate([
       {
         path: "follower",
         select: "-password -email",
