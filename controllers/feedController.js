@@ -5,6 +5,8 @@ const CustomError = require("../errors");
 const path = require("path");
 const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
+const BookMark = require("../models/BookMark");
+const Likes = require("../models/Likes");
 
 const createFeeds = async (req, res) => {
   req.body.user = req.user.userId;
@@ -92,13 +94,22 @@ const updateFeedById = async (req, res) => {
 };
 
 const deleteFeedById = async (req, res) => {
-  const feed = await Feeds.findById(req.params.id);
+  const feedId = req.params.id;
+  const feed = await Feeds.findById(feedId);
+
   if (!feed) {
     throw new CustomError.NotFoundError("Feed not found");
   }
   checkPermissions(req.user, feed.user);
+  await BookMark.deleteMany({ feed: feedId });
+  await Likes.deleteMany({ feed: feedId });
   await feed.deleteOne();
-  sendSuccess(res, StatusCodes.OK, null, "Your feed deleted successfully");
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    null,
+    "Your feed and related data deleted successfully",
+  );
 };
 
 const searchFeeds = async (req, res) => {

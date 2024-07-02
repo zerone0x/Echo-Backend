@@ -11,8 +11,6 @@ const {
   authorizePermission,
 } = require("../middlewares/authentication");
 
-// router.route("/").post([authenticateUser], createFeeds).get(getAllFeeds);
-
 router.route("/booked").post([authenticateUser], BookMarkFeed);
 router.route("/cancelbooked").post([authenticateUser], CancelBookMarkFeed);
 router

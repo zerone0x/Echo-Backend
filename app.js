@@ -11,6 +11,8 @@ const userRouter = require("./routes/userRoute");
 const feedRouter = require("./routes/feedRoute");
 const commentRouter = require("./routes/commentRoute");
 const bookmarkRouter = require("./routes/bookmarkRoute");
+const likesRouter = require("./routes/likesRoute");
+const followRouter = require("./routes/followRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const fileUpload = require("express-fileupload");
@@ -63,8 +65,10 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/feeds", feedRouter);
+app.use("/api/v1/like", likesRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/bookmark", bookmarkRouter);
+app.use("/api/v1/follow", followRouter);
 
 const Port = process.env.PORT || 3007;
 const start = async () => {

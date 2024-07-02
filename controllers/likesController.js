@@ -1,12 +1,63 @@
 const Likes = require("../models/Likes");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const path = require("path");
 const { checkPermissions } = require("../utils");
 const { sendSuccess } = require("../utils/FormatResponse");
 
-const CreateLikesFeed = async (req, res) => {
-  res.send("likes your tweet");
+const LikeFeed = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const feedId = req.body.feedId;
+    const existingLikes = await Likes.findOne({
+      user: userId,
+      feed: feedId,
+    });
+    if (existingLikes) {
+      const likesFeeds = await Likes.findOneAndDelete({
+        user: userId,
+        feed: feedId,
+      });
+      sendSuccess(res, StatusCodes.OK, likesFeeds, "Feed unliked successfully");
+      return;
+    }
+    const likesFeeds = await Likes.create({ user: userId, feed: feedId });
+    sendSuccess(
+      res,
+      StatusCodes.CREATED,
+      likesFeeds,
+      "Feed liked successfully",
+    );
+  } catch (error) {
+    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
+      message: error.message || "Failed to like feed",
+    });
+  }
+};
+
+const getAllLikesByUserId = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const likeFeeds = await Likes.find({ user: userId })
+      .populate({
+        path: "feed",
+        populate: {
+          path: "user",
+          select: "-password",
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      likeFeeds,
+      "likeFeeds fetched successfully",
+    );
+  } catch (error) {
+    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER).send({
+      message: error.message || "Failed to fetch likeFeeds",
+    });
+  }
 };
 
 const CreateLikesComment = async (req, res) => {
@@ -14,6 +65,7 @@ const CreateLikesComment = async (req, res) => {
 };
 
 module.exports = {
-  CreateLikesFeed,
+  LikeFeed,
   CreateLikesComment,
+  getAllLikesByUserId,
 };
