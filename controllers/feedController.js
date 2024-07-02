@@ -5,6 +5,8 @@ const CustomError = require("../errors");
 const path = require("path");
 const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
+const BookMark = require("../models/BookMark");
+const Likes = require("../models/Likes");
 
 const createFeeds = async (req, res) => {
   req.body.user = req.user.userId;
@@ -21,10 +23,12 @@ const getAllFeeds = async (req, res) => {
   // let {cursor, limit=10} = req.query;
   // limit = parseInt(limit, 10);
 
-  const AllFeeds = await Feeds.find({}).populate({
-    path: "user",
-    select: "-password",
-  });
+  const AllFeeds = await Feeds.find({})
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .sort({ createdAt: -1 });
   sendSuccess(
     res,
     StatusCodes.CREATED,
@@ -35,15 +39,17 @@ const getAllFeeds = async (req, res) => {
 
 const getFeedById = async (req, res) => {
   try {
-    const feed = await Feeds.findById(req.params.id).populate([
-      {
-        path: "user",
-        select: "-password",
-      },
-      {
-        path: "comments",
-      },
-    ]);
+    const feed = await Feeds.findById(req.params.id)
+      .populate([
+        {
+          path: "user",
+          select: "-password",
+        },
+        {
+          path: "comments",
+        },
+      ])
+      .sort({ createdAt: -1 });
     // if (!feed) {
     //   sendFail(res, StatusCodes.NOT_FOUND, null, "Feed not found");
     //   return;
@@ -55,25 +61,26 @@ const getFeedById = async (req, res) => {
 };
 
 const getFeedByUserId = async (req, res) => {
-  const feeds = await Feeds.find({ user: req.params.userId }).populate(
-    "comments",
-  );
+  const feeds = await Feeds.find({ user: req.params.userId })
+    .populate("comments")
+    .sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
 };
 
 const getFeedByUsername = async (req, res) => {
   // try {
-  console.log(req.params.username);
   const user = await User.findOne({ name: req.params.username });
-  const feeds = await Feeds.find({ user: user._id }).populate([
-    {
-      path: "user",
-      select: "-password",
-    },
-    {
-      path: "comments",
-    },
-  ]);
+  const feeds = await Feeds.find({ user: user._id })
+    .populate([
+      {
+        path: "user",
+        select: "-password",
+      },
+      {
+        path: "comments",
+      },
+    ])
+    .sort({ createdAt: -1 });
   sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
   // } catch (error) {
   //   console.log(error);
@@ -86,13 +93,22 @@ const updateFeedById = async (req, res) => {
 };
 
 const deleteFeedById = async (req, res) => {
-  const feed = await Feeds.findById(req.params.id);
+  const feedId = req.params.id;
+  const feed = await Feeds.findById(feedId);
+
   if (!feed) {
     throw new CustomError.NotFoundError("Feed not found");
   }
   checkPermissions(req.user, feed.user);
+  await BookMark.deleteMany({ feed: feedId });
+  await Likes.deleteMany({ feed: feedId });
   await feed.deleteOne();
-  sendSuccess(res, StatusCodes.OK, null, "Your feed deleted successfully");
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    null,
+    "Your feed and related data deleted successfully",
+  );
 };
 
 const searchFeeds = async (req, res) => {

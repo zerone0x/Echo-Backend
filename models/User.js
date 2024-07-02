@@ -12,11 +12,11 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       validate: {
-      validator: function(v) {
-        return !/\s/.test(v);
+        validator: function (v) {
+          return !/\s/.test(v);
+        },
+        message: (props) => `${props.value} should not contain any spaces`,
       },
-      message: props => `${props.value} should not contain any spaces` 
-      }
     },
     username: {
       type: String,
@@ -67,14 +67,6 @@ const UserSchema = new mongoose.Schema(
         default: [],
       },
     ],
-    // LikedPosts: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Post'
-    // }],
-    // LikedComments: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Comment'
-    // }],
     ProfileImage: {
       type: String,
       default: "/uploads/default.jpeg",
