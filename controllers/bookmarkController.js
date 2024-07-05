@@ -73,8 +73,23 @@ const getAllBookmarksByUserId = async (req, res) => {
   }
 };
 
+const getIsBooked = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const feedId = req.req.params.feedId;
+    const isBooked = await BookMark.findOne({ user: userId, feed: feedId });
+    const result = isBooked ? true : false;
+    sendSuccess(res, StatusCodes.OK, result, `your feed book status`);
+  } catch (error) {
+    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
+      message: error.message || "Failed to fetch your feed",
+    });
+  }
+};
+
 module.exports = {
   BookMarkFeed,
   CancelBookMarkFeed,
+  getIsBooked,
   getAllBookmarksByUserId,
 };

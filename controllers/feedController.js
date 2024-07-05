@@ -7,34 +7,56 @@ const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const BookMark = require("../models/BookMark");
 const Likes = require("../models/Likes");
+const paginate = require("../utils/paginate");
 
 const createFeeds = async (req, res) => {
-  req.body.user = req.user.userId;
-  const feeds = await Feeds.create(req.body);
-  sendSuccess(
-    res,
-    StatusCodes.CREATED,
-    feeds,
-    "Your feed created successfully",
-  );
+  try {
+    const imageUrl = await uploadImage(req);
+    req.body.user = req.user.userId;
+    req.body.image = imageUrl;
+
+    const feeds = await Feeds.create(req.body);
+    sendSuccess(
+      res,
+      StatusCodes.CREATED,
+      feeds,
+      "Your feed has been created successfully",
+    );
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
 };
 
 const getAllFeeds = async (req, res) => {
-  // let {cursor, limit=10} = req.query;
-  // limit = parseInt(limit, 10);
+  try {
+    const paginationOptions = {
+      cursorField: "createdAt",
+      sort: { createdAt: -1 },
+      limit: 10,
+      populateOptions: [
+        {
+          path: "user",
+          select: "-password",
+        },
+      ],
+    };
 
-  const AllFeeds = await Feeds.find({})
-    .populate({
-      path: "user",
-      select: "-password",
-    })
-    .sort({ createdAt: -1 });
-  sendSuccess(
-    res,
-    StatusCodes.CREATED,
-    AllFeeds,
-    "All feeds fetched successfully",
-  );
+    const paginationResult = await paginate(
+      Feeds,
+      req.query.cursor,
+      paginationOptions,
+    );
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      paginationResult,
+      "Your feed fetched successfully",
+    );
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Error fetching feeds", error: error.message });
+  }
 };
 
 const getFeedById = async (req, res) => {
@@ -115,12 +137,12 @@ const searchFeeds = async (req, res) => {
   res.send("searchFeeds");
 };
 
-const uploadImage = async (req, res) => {
-  if (!req.files) {
-    throw new CustomError.BadRequestError("No File Uploaded");
+const uploadImage = async (req) => {
+  if (!req.files || !req.files.image) {
+    return null;
   }
   const FeedsImage = req.files.image;
-  console.log(FeedsImage);
+
   if (!FeedsImage.mimetype.startsWith("image")) {
     throw new CustomError.BadRequestError("Please upload an image file");
   }
@@ -128,13 +150,14 @@ const uploadImage = async (req, res) => {
   if (FeedsImage.size > maxSize) {
     throw new CustomError.BadRequestError("File size should be less than 1MB");
   }
+
   const imagePath = path.join(
     __dirname,
     `../public/uploads/${FeedsImage.name}`,
   );
   await FeedsImage.mv(imagePath);
-  const image = { image: `/uploads/${FeedsImage.name}` };
-  sendSuccess(res, StatusCodes.OK, image, "Your Image uploaded successfully");
+
+  return `/uploads/${FeedsicImage.name}`;
 };
 
 module.exports = {

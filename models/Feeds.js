@@ -13,6 +13,10 @@ const FeedsSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

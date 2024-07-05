@@ -4,6 +4,7 @@ const {
   LikeFeed,
   CreateLikesComment,
   getAllLikesByUserId,
+  getIsLiked,
 } = require("../controllers/likesController");
 
 const {
@@ -13,4 +14,5 @@ const {
 
 router.route("/likedfeed").post([authenticateUser], LikeFeed);
 router.route("/getAllLikes").get([authenticateUser], getAllLikesByUserId);
+router.route("/getIsLiked/:feedId").get([authenticateUser], getIsLiked);
 module.exports = router;

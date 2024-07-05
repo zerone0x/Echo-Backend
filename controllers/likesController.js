@@ -17,10 +17,12 @@ const LikeFeed = async (req, res) => {
         user: userId,
         feed: feedId,
       });
+      await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
       sendSuccess(res, StatusCodes.OK, likesFeeds, "Feed unliked successfully");
       return;
     }
     const likesFeeds = await Likes.create({ user: userId, feed: feedId });
+    await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
     sendSuccess(
       res,
       StatusCodes.CREATED,
@@ -30,6 +32,20 @@ const LikeFeed = async (req, res) => {
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
       message: error.message || "Failed to like feed",
+    });
+  }
+};
+
+const getIsLiked = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const feedId = req.params.feedId;
+    const isLiked = await Likes.findOne({ user: userId, feed: feedId });
+    const result = isLiked ? true : false;
+    sendSuccess(res, StatusCodes.OK, result, `your feed like status`);
+  } catch (error) {
+    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
+      message: error.message || "Failed to fetch your feed",
     });
   }
 };
@@ -67,5 +83,6 @@ const CreateLikesComment = async (req, res) => {
 module.exports = {
   LikeFeed,
   CreateLikesComment,
+  getIsLiked,
   getAllLikesByUserId,
 };
