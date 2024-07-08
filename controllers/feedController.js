@@ -11,9 +11,10 @@ const paginate = require("../utils/paginate");
 
 const createFeeds = async (req, res) => {
   try {
-    const imageUrl = await uploadImage(req);
+    const imageUrl = req.file ? req.file?.path : null;
     req.body.user = req.user.userId;
-    req.body.image = imageUrl;
+    req.body.feedImage = imageUrl;
+    req.body.content = req.body.content;
 
     const feeds = await Feeds.create(req.body);
     sendSuccess(
@@ -40,7 +41,6 @@ const getAllFeeds = async (req, res) => {
         },
       ],
     };
-
     const paginationResult = await paginate(
       Feeds,
       req.query.cursor,
@@ -90,23 +90,23 @@ const getFeedByUserId = async (req, res) => {
 };
 
 const getFeedByUsername = async (req, res) => {
-  // try {
-  const user = await User.findOne({ name: req.params.username });
-  const feeds = await Feeds.find({ user: user._id })
-    .populate([
-      {
-        path: "user",
-        select: "-password",
-      },
-      {
-        path: "comments",
-      },
-    ])
-    .sort({ createdAt: -1 });
-  sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    const user = await User.findOne({ name: req.params.username });
+    const feeds = await Feeds.find({ user: user._id })
+      .populate([
+        {
+          path: "user",
+          select: "-password",
+        },
+        {
+          path: "comments",
+        },
+      ])
+      .sort({ createdAt: -1 });
+    sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // TODO delete maybe no need to use it
@@ -122,8 +122,6 @@ const deleteFeedById = async (req, res) => {
     throw new CustomError.NotFoundError("Feed not found");
   }
   checkPermissions(req.user, feed.user);
-  await BookMark.deleteMany({ feed: feedId });
-  await Likes.deleteMany({ feed: feedId });
   await feed.deleteOne();
   sendSuccess(
     res,
@@ -134,30 +132,36 @@ const deleteFeedById = async (req, res) => {
 };
 
 const searchFeeds = async (req, res) => {
-  res.send("searchFeeds");
+  const keyword = req.body.keyword;
+  const feeds = await Feeds.find({ content: new RegExp(keyword, "i") });
+  const user = await User.find({ name: new RegExp(keyword, "i") });
+  const searchRes = { feeds: feeds, user: user };
+  sendSuccess(
+    res,
+    StatusCodes.OK,
+    searchRes,
+    "Your search result fetched successfully",
+  );
 };
 
 const uploadImage = async (req) => {
-  if (!req.files || !req.files.image) {
-    return null;
-  }
-  const FeedsImage = req.files.image;
-
-  if (!FeedsImage.mimetype.startsWith("image")) {
-    throw new CustomError.BadRequestError("Please upload an image file");
-  }
-  const maxSize = 1024 * 1024;
-  if (FeedsImage.size > maxSize) {
-    throw new CustomError.BadRequestError("File size should be less than 1MB");
-  }
-
-  const imagePath = path.join(
-    __dirname,
-    `../public/uploads/${FeedsImage.name}`,
-  );
-  await FeedsImage.mv(imagePath);
-
-  return `/uploads/${FeedsicImage.name}`;
+  // if (!req.files || !req.files.image) {
+  //   return null;
+  // }
+  // const FeedsImage = req.files.image;
+  // if (!FeedsImage.mimetype.startsWith("image")) {
+  //   throw new CustomError.BadRequestError("Please upload an image file");
+  // }
+  // const maxSize = 1024 * 1024;
+  // if (FeedsImage.size > maxSize) {
+  //   throw new CustomError.BadRequestError("File size should be less than 1MB");
+  // }
+  // const imagePath = path.join(
+  //   __dirname,
+  //   `../public/uploads/${FeedsImage.name}`,
+  // );
+  // await FeedsImage.mv(imagePath);
+  // return `/uploads/${FeedsicImage.name}`;
 };
 
 module.exports = {
@@ -167,7 +171,6 @@ module.exports = {
   getFeedByUserId,
   updateFeedById,
   deleteFeedById,
-  uploadImage,
   searchFeeds,
   getFeedByUsername,
 };

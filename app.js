@@ -15,8 +15,9 @@ const likesRouter = require("./routes/likesRoute");
 const followRouter = require("./routes/followRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
-const fileUpload = require("express-fileupload");
+// const fileUpload = require("express-fileupload");
 const cors = require("cors");
+const multer = require("multer");
 // // passport
 // app.use(passport.initialize())
 // app.use(passport.session())
@@ -54,8 +55,8 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
-app.use(express.static("./public"));
-app.use(fileUpload());
+// app.use(express.static("./public"));
+// app.use(fileUpload());
 
 // routes
 app.get("/", (req, res) => {
@@ -70,7 +71,7 @@ app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/bookmark", bookmarkRouter);
 app.use("/api/v1/follow", followRouter);
 
-const Port = process.env.PORT || 3007;
+const Port = process.env.PORT || 8080;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);

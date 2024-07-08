@@ -79,19 +79,28 @@ const showCurrUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { email, name } = req.body;
-  if (!email || !name) {
-    throw new CustomError.BadRequestError("Please provide email and name");
+  try {
+    const { username, banner, profileImage, bio } = req.body;
+    const user = await User.findOne({ _id: req.user.userId });
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ msg: "User not found" });
+    }
+    user.username = username;
+    user.Banner = banner;
+    user.profileImage = profileImage;
+    user.Bio = bio;
+    await user.save();
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      user,
+      "Your user detail updated successfully",
+    );
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send({ msg: "Error updating user", error: error.message });
   }
-  console.log(req.user);
-  const user = await User.findOne({ _id: req.user.userId });
-  user.name = name;
-  user.email = email;
-  await user.save();
-  // const user = await User.findOneAndUpdate({_id: req.user._id}, {email, name}, {new: true, runValidators: true})
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 const updateUserPwd = async (req, res) => {

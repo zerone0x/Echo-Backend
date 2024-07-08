@@ -99,8 +99,27 @@ const getFans = async (req, res) => {
   }
 };
 
+const getIsFollowed = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const username = req.params.username;
+    const newPpl = await User.findOne({ name: username });
+    const isFollowed = await Follow.findOne({
+      followed: newPpl._id,
+      follower: userId,
+    });
+    const result = isFollowed ? true : false;
+    sendSuccess(res, StatusCodes.OK, result, `your followed ta`);
+  } catch (error) {
+    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
+      message: error.message || "Failed to fetch your follow status",
+    });
+  }
+};
+
 module.exports = {
   AddFollowing,
   getFollowing,
+  getIsFollowed,
   getFans,
 };

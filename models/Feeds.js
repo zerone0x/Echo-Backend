@@ -5,7 +5,6 @@ const FeedsSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true,
-      required: [true, "Please provide content"],
       maxlength: [1000, "Content should be less than 1000 characters"],
     },
     user: {
@@ -16,6 +15,10 @@ const FeedsSchema = new mongoose.Schema(
     likesCount: {
       type: Number,
       default: 0,
+    },
+    feedImage: {
+      type: String,
+      default: null,
     },
   },
   {
@@ -32,6 +35,14 @@ FeedsSchema.virtual("comments", {
   justOne: false,
 });
 
+FeedsSchema.pre("save", function (next) {
+  if (!this.content && !this.feedImage) {
+    next(new Error("Please provide either content or an image"));
+  } else {
+    next();
+  }
+});
+
 FeedsSchema.pre(
   "deleteOne",
   { document: false, query: true },
@@ -40,6 +51,8 @@ FeedsSchema.pre(
     const feedId = query._id;
     if (feedId) {
       await mongoose.model("Comment").deleteMany({ feed: feedId });
+      await mongoose.model("BookMark").deleteMany({ feed: feedId });
+      await mongoose.model("Likes").deleteMany({ feed: feedId });
     }
     next();
   },

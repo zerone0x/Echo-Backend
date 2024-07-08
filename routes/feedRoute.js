@@ -6,22 +6,25 @@ const {
   getFeedById,
   updateFeedById,
   deleteFeedById,
-  uploadImage,
   searchFeeds,
   getFeedByUserId,
   getFeedByUsername,
 } = require("../controllers/feedController");
-
+const checkFileSize = require("../middlewares/checkFileSize");
+const upload = require("../middlewares/upload");
 const {
   authenticateUser,
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router.route("/").post([authenticateUser], createFeeds).get(getAllFeeds);
+router
+  .route("/")
+  .post([authenticateUser], upload.single("image"), checkFileSize, createFeeds)
+  .get([authenticateUser], getAllFeeds);
 
-router.route("/uploadImage").post([authenticateUser], uploadImage);
 router.route("/user/:username").get(getFeedByUsername);
 router.route("/user/:userId").get(getFeedByUserId);
+router.route("/searchFeeds").post(searchFeeds);
 
 router
   .route("/:id")

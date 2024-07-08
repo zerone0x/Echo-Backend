@@ -18,4 +18,5 @@ router
   .route("/getAllBookMark")
   .get([authenticateUser], getAllBookmarksByUserId);
 router.route("/getIsBooked/:feedId").get([authenticateUser], getIsBooked);
+
 module.exports = router;
