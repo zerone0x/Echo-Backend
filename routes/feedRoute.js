@@ -19,7 +19,12 @@ const {
 
 router
   .route("/")
-  .post([authenticateUser], upload.single("image"), checkFileSize, createFeeds)
+  .post(
+    [authenticateUser],
+    upload.array("image", 4),
+    checkFileSize,
+    createFeeds,
+  )
   .get([authenticateUser], getAllFeeds);
 
 router.route("/user/:username").get(getFeedByUsername);

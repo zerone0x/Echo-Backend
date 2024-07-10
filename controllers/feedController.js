@@ -11,9 +11,12 @@ const paginate = require("../utils/paginate");
 
 const createFeeds = async (req, res) => {
   try {
-    const imageUrl = req.file ? req.file?.path : null;
+    let imageUrls = [];
+    if (req.files && req.files.length > 0) {
+      imageUrls = req.files.map((file) => file.path);
+    }
     req.body.user = req.user.userId;
-    req.body.feedImage = imageUrl;
+    req.body.feedImages = imageUrls;
     req.body.content = req.body.content;
 
     const feeds = await Feeds.create(req.body);
@@ -133,7 +136,12 @@ const deleteFeedById = async (req, res) => {
 
 const searchFeeds = async (req, res) => {
   const keyword = req.body.keyword;
-  const feeds = await Feeds.find({ content: new RegExp(keyword, "i") });
+  const feeds = await Feeds.find({
+    content: new RegExp(keyword, "i"),
+  }).populate({
+    path: "user",
+    select: "-password",
+  });
   const user = await User.find({ name: new RegExp(keyword, "i") });
   const searchRes = { feeds: feeds, user: user };
   sendSuccess(

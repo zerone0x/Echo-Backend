@@ -16,10 +16,12 @@ const FeedsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    feedImage: {
-      type: String,
-      default: null,
-    },
+    feedImages: [
+      {
+        type: String,
+        default: null,
+      },
+    ],
   },
   {
     timestamps: true,
@@ -33,6 +35,13 @@ FeedsSchema.virtual("comments", {
   localField: "_id",
   foreignField: "feed",
   justOne: false,
+});
+
+FeedsSchema.virtual("userDetails", {
+  ref: "User",
+  localField: "user",
+  foreignField: "_id",
+  justOne: true,
 });
 
 FeedsSchema.pre("save", function (next) {

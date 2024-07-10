@@ -8,14 +8,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// 配置 CloudinaryStorage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     return {
       folder: "EchoAPP",
-      allowedFormats: ["jpeg", "png", "jpg"],
-      public_id: `${req.user.userId}-${Date.now()}`, // 假设你想用用户ID和时间戳命名文件
+      allowedFormats: ["jpeg", "png", "jpg", "gif"],
+      public_id: `${req.user.userId}-${Date.now()}`,
     };
   },
 });

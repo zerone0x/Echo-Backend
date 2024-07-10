@@ -15,7 +15,6 @@ const likesRouter = require("./routes/likesRoute");
 const followRouter = require("./routes/followRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
-// const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const multer = require("multer");
 // // passport
@@ -75,7 +74,7 @@ const Port = process.env.PORT || 8080;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    // const result = await User.deleteMany({ email: "soberzml.42@gmail.com" });
+    // const result = await Feeds.deleteMany({ content: "fdsafdffff" });
     app.listen(Port, console.log(`Server running on port ${Port}`));
   } catch (error) {
     console.error(error);
