@@ -80,14 +80,18 @@ const showCurrUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { username, banner, profileImage, bio } = req.body;
+    const { username, bio } = req.body;
     const user = await User.findOne({ _id: req.user.userId });
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({ msg: "User not found" });
     }
+    if (req.files["ProfileImage"] && req.files["ProfileImage"][0]) {
+      user.ProfileImage = req.files["ProfileImage"][0].path;
+    }
+    if (req.files["Banner"] && req.files["Banner"][0]) {
+      user.Banner = req.files["Banner"][0].path;
+    }
     user.username = username;
-    user.Banner = banner;
-    user.profileImage = profileImage;
     user.Bio = bio;
     await user.save();
     sendSuccess(
@@ -110,7 +114,6 @@ const updateUserPwd = async (req, res) => {
   }
   const user = await User.findOne({ email: email });
 
-  console.log("user===============", user);
   const isPasswordCorrect = await user.comparePassword(oldPassword);
   if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError("Invalid Credentials");

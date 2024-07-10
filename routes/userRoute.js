@@ -20,9 +20,16 @@ router.route("/").get(authenticateUser, getAllUsers);
 // .get(authenticateUser, authorizePermission("admin"), getAllUsers);
 
 router.route("/showMe").get(showCurrUser);
-router
-  .route("/updateUser")
-  .patch(authenticateUser, upload.single("image"), checkFileSize, updateUser);
+router.post(
+  "/updateUser",
+  authenticateUser,
+  upload.fields([
+    { name: "ProfileImage", maxCount: 1 },
+    { name: "Banner", maxCount: 1 },
+  ]),
+  checkFileSize,
+  updateUser,
+);
 router.route("/updateUserPwd").patch(authenticateUser, updateUserPwd);
 router.route("/addFollowers").patch(authenticateUser, addFollowers);
 router.route("/id/:id").get(authenticateUser, getSingleUser);

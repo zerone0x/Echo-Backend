@@ -69,7 +69,8 @@ const UserSchema = new mongoose.Schema(
     ],
     ProfileImage: {
       type: String,
-      default: "/uploads/default.jpeg",
+      default:
+        "https://res.cloudinary.com/curbyouraction/image/upload/v1720602851/EchoAPP/667feb793c4a91620183595c-1720602850860.jpg",
     },
     Bio: {
       type: String,
@@ -77,7 +78,8 @@ const UserSchema = new mongoose.Schema(
     },
     Banner: {
       type: String,
-      default: "/uploads/banner.png",
+      default:
+        "https://res.cloudinary.com/curbyouraction/image/upload/v1720602855/EchoAPP/667feb793c4a91620183595c-1720602850859.png",
     },
   },
   { timestamps: true },

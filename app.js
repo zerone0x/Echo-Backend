@@ -28,6 +28,8 @@ const notFoundMiddleware = require("./middlewares/not-found");
 const errorMiddleware = require("./middlewares/error-handler");
 const User = require("./models/User");
 const Feeds = require("./models/Feeds");
+const BookMark = require("./models/BookMark");
+const Likes = require("./models/Likes");
 const corsOptions = {
   origin: process.env.FE_ORIGIN,
   credentials: true,
@@ -74,7 +76,21 @@ const Port = process.env.PORT || 8080;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    // const result = await Feeds.deleteMany({ content: "fdsafdffff" });
+    // const deletedBookMarks = await BookMark.deleteMany({});
+    // console.log(`Deleted ${deletedBookMarks.deletedCount} bookmarks.`);
+
+    // // 删除Likes集合中的所有数据
+    // const deletedLikes = await Likes.deleteMany({});
+    // console.log(`Deleted ${deletedLikes.deletedCount} likes.`);
+    //     const newImageUrl = "https://res.cloudinary.com/curbyouraction/image/upload/v1720602855/EchoAPP/667feb793c4a91620183595c-1720602850859.png";
+
+    // const result = await User.updateMany(
+    //   {}, // filter for all documents
+    //   { $set: { Banner: newImageUrl } } // update operation
+    // );
+    const feedCount = await Feeds.countDocuments({});
+    console.log(`Total feeds: ${feedCount}`);
+    // console.log(result); // This will log the outcome of the update operation
     app.listen(Port, console.log(`Server running on port ${Port}`));
   } catch (error) {
     console.error(error);
