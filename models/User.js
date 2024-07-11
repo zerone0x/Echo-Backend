@@ -85,6 +85,13 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+UserSchema.pre("save", function (next) {
+  if (!this.username) {
+    this.username = this.name;
+  }
+  next();
+});
+
 UserSchema.pre("save", async function () {
   if (this.googleId || this.githubId) {
     return;

@@ -1,4 +1,5 @@
 const Likes = require("../models/Likes");
+const Feed = require("../models/Feeds");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { checkPermissions } = require("../utils");
@@ -8,30 +9,47 @@ const LikeFeed = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.body.feedId;
+    const itemType = req.body.itemType;
     const existingLikes = await Likes.findOne({
       user: userId,
-      feed: feedId,
+      bookmarkedItem: feedId,
+      type: itemType,
     });
     if (existingLikes) {
       const likesFeeds = await Likes.findOneAndDelete({
         user: userId,
-        feed: feedId,
+        bookmarkedItem: feedId,
+        type: itemType,
       });
-      await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
+      if (itemType === "Feed") {
+        await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
+      }
+      if (itemType === "Comment") {
+        await Comment.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
+      }
       sendSuccess(res, StatusCodes.OK, likesFeeds, "Feed unliked successfully");
       return;
     }
-    const likesFeeds = await Likes.create({ user: userId, feed: feedId });
-    await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
+    const likesFeeds = await Likes.create({
+      user: userId,
+      bookmarkedItem: feedId,
+      type: itemType,
+    });
+    if (itemType === "Feed") {
+      await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
+    }
+    if (itemType === "Comment") {
+      await Comment.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
+    }
     sendSuccess(
       res,
       StatusCodes.CREATED,
       likesFeeds,
-      "Feed liked successfully",
+      `${itemType} liked successfully`,
     );
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to like feed",
+      message: error.message || `Failed to like ${itemType}`,
     });
   }
 };
@@ -40,12 +58,17 @@ const getIsLiked = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.params.feedId;
-    const isLiked = await Likes.findOne({ user: userId, feed: feedId });
-    const result = isLiked ? true : false;
-    sendSuccess(res, StatusCodes.OK, result, `your feed like status`);
+    const itemType = req.body.itemType;
+    const isLiked = await Likes.findOne({
+      user: userId,
+      bookmarkedItem: feedId,
+      type: itemType,
+    });
+    const result = !!isLiked;
+    sendSuccess(res, StatusCodes.OK, result, `your ${itemType} like status`);
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to fetch your feed",
+      message: error.message || `Failed to fetch your ${itemType}`,
     });
   }
 };
@@ -55,7 +78,7 @@ const getAllLikesByUserId = async (req, res) => {
     const userId = req.user.userId;
     const likeFeeds = await Likes.find({ user: userId })
       .populate({
-        path: "feed",
+        path: "bookmarkedItem",
         populate: {
           path: "user",
           select: "-password",
@@ -67,11 +90,11 @@ const getAllLikesByUserId = async (req, res) => {
       res,
       StatusCodes.OK,
       likeFeeds,
-      "likeFeeds fetched successfully",
+      `${itemType} feeds fetched successfully`,
     );
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER).send({
-      message: error.message || "Failed to fetch likeFeeds",
+      message: error.message || `Failed to fetch ${itemType} feeds`,
     });
   }
 };

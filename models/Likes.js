@@ -7,10 +7,15 @@ const LikesSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    feed: {
+    bookmarkedItem: {
       type: mongoose.Types.ObjectId,
-      ref: "Feed",
       required: true,
+      refPath: "type",
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ["Comment", "Feed"],
     },
   },
   {

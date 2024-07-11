@@ -16,12 +16,20 @@ const FeedsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    commentsCount: {
+      type: Number,
+      default: 0,
+    },
     feedImages: [
       {
         type: String,
         default: null,
       },
     ],
+    type: {
+      type: String,
+      default: "Feed",
+    },
   },
   {
     timestamps: true,
@@ -60,8 +68,8 @@ FeedsSchema.pre(
     const feedId = query._id;
     if (feedId) {
       await mongoose.model("Comment").deleteMany({ feed: feedId });
-      await mongoose.model("BookMark").deleteMany({ feed: feedId });
-      await mongoose.model("Likes").deleteMany({ feed: feedId });
+      await mongoose.model("BookMark").deleteMany({ bookmarkedItem: feedId });
+      await mongoose.model("Likes").deleteMany({ bookmarkedItem: feedId });
     }
     next();
   },

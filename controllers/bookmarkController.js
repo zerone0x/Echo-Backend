@@ -12,33 +12,40 @@ const BookMarkFeed = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.body.feedId;
+    const itemType = req.body.itemType;
     const existingBookmark = await BookMark.findOne({
       user: userId,
-      feed: feedId,
+      bookmarkedItem: feedId,
+      type: itemType,
     });
     if (existingBookmark) {
       const bookmark = await BookMark.findOneAndDelete({
         user: userId,
-        feed: feedId,
+        bookmarkedItem: feedId,
+        type: itemType,
       });
       sendSuccess(
         res,
         StatusCodes.OK,
         bookmark,
-        "Feed unbookmarked successfully",
+        `${itemType} unbookmarked successfully`,
       );
       return;
     }
-    const bookmark = await BookMark.create({ user: userId, feed: feedId });
+    const bookmark = await BookMark.create({
+      user: userId,
+      bookmarkedItem: feedId,
+      type: itemType,
+    });
     sendSuccess(
       res,
       StatusCodes.CREATED,
       bookmark,
-      "Feed bookmarked successfully",
+      `${itemType} bookmarked successfully`,
     );
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to bookmark feed",
+      message: error.message || `Failed to bookmark ${itemType}`,
     });
   }
 };
@@ -52,7 +59,7 @@ const getAllBookmarksByUserId = async (req, res) => {
     const userId = req.user.userId;
     const bookmarks = await BookMark.find({ user: userId })
       .populate({
-        path: "feed",
+        path: "bookmarkedItem",
         populate: {
           path: "user",
           select: "-password",
@@ -64,11 +71,11 @@ const getAllBookmarksByUserId = async (req, res) => {
       res,
       StatusCodes.OK,
       bookmarks,
-      "Bookmarks fetched successfully",
+      `${itemType} Bookmarks fetched successfully`,
     );
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER).send({
-      message: error.message || "Failed to fetch bookmarks",
+      message: error.message || `Failed to fetch ${itemType} bookmarks`,
     });
   }
 };
@@ -77,12 +84,17 @@ const getIsBooked = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.params.feedId;
-    const isBooked = await BookMark.findOne({ user: userId, feed: feedId });
-    const result = isBooked ? true : false;
-    sendSuccess(res, StatusCodes.OK, result, `your feed book status`);
+    const itemType = req.body.itemType;
+    const isBooked = await BookMark.findOne({
+      user: userId,
+      bookmarkedItem: feedId,
+      type: itemType,
+    });
+    const result = !!isBooked;
+    sendSuccess(res, StatusCodes.OK, result, `your ${itemType} book status`);
   } catch (error) {
     res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to fetch your feed",
+      message: error.message || `Failed to fetch your ${itemType}`,
     });
   }
 };

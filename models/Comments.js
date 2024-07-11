@@ -13,10 +13,24 @@ const CommentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
     feed: {
       type: mongoose.Types.ObjectId,
       ref: "Feed",
       required: true,
+    },
+    feedImages: [
+      {
+        type: String,
+        default: null,
+      },
+    ],
+    type: {
+      type: String,
+      default: "Comment",
     },
   },
   { timestamps: true },

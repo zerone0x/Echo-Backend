@@ -5,6 +5,7 @@ const {
   deleteCommentById,
   getAllComments,
   getCommentById,
+  getCommentsByFeedID,
 } = require("../controllers/commentController");
 
 const {
@@ -14,6 +15,7 @@ const {
 
 router.route("/").post([authenticateUser], createComments).get(getAllComments);
 
+router.route("/getCommentsByFeedID/:feedId").get(getCommentsByFeedID);
 router
   .route("/:id")
   .get(getCommentById)

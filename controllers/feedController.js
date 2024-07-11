@@ -1,5 +1,6 @@
 const Feeds = require("../models/Feeds");
 const User = require("../models/User");
+const Comment = require("../models/Comments");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const path = require("path");
@@ -72,6 +73,10 @@ const getFeedById = async (req, res) => {
         },
         {
           path: "comments",
+          populate: {
+            path: "user",
+            select: "-password",
+          },
         },
       ])
       .sort({ createdAt: -1 });
@@ -138,12 +143,20 @@ const searchFeeds = async (req, res) => {
   const keyword = req.body.keyword;
   const feeds = await Feeds.find({
     content: new RegExp(keyword, "i"),
-  }).populate({
-    path: "user",
-    select: "-password",
-  });
+  })
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .sort({ createdAt: -1 });
   const user = await User.find({ name: new RegExp(keyword, "i") });
-  const searchRes = { feeds: feeds, user: user };
+  const comments = await Comment.find({ content: new RegExp(keyword, "i") })
+    .populate({
+      path: "user",
+      select: "-password",
+    })
+    .sort({ createdAt: -1 });
+  const searchRes = { feeds: feeds, user: user, comments: comments };
   sendSuccess(
     res,
     StatusCodes.OK,

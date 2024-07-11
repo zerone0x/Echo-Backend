@@ -15,6 +15,7 @@ const createComments = async (req, res) => {
     throw new CustomError.NotFoundError("Feed not found");
   }
   const comments = await Comment.create(req.body);
+  await Feeds.findByIdAndUpdate(feedsId, { $inc: { commentsCount: 1 } });
   sendSuccess(
     res,
     StatusCodes.CREATED,
@@ -50,6 +51,27 @@ const getCommentById = async (req, res) => {
   );
 };
 
+const getCommentsByFeedID = async (req, res) => {
+  try {
+    const comments = await Comment.find({ feed: req.params.feedId }).populate({
+      path: "user",
+      select: "-password",
+    });
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      comments,
+      "Your comments fetched successfully",
+    );
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch comments",
+      error: error.message,
+    });
+  }
+};
+
 const deleteCommentById = async (req, res) => {
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
@@ -57,6 +79,7 @@ const deleteCommentById = async (req, res) => {
   }
   checkPermissions(req.user, comment.user);
   await comment.deleteOne();
+  await Feeds.findByIdAndUpdate(comment.feed, { $inc: { commentsCount: -1 } });
   sendSuccess(res, StatusCodes.OK, null, "Your Comment deleted successfully");
 };
 
@@ -65,4 +88,5 @@ module.exports = {
   deleteCommentById,
   getAllComments,
   getCommentById,
+  getCommentsByFeedID,
 };
