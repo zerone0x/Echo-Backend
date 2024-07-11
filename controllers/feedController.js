@@ -18,14 +18,21 @@ const createFeeds = async (req, res) => {
     }
     req.body.user = req.user.userId;
     req.body.feedImages = imageUrls;
-    req.body.content = req.body.content;
-
-    const feeds = await Feeds.create(req.body);
+    const type = req.body.type;
+    let result;
+    if (type === "Feed") {
+      result = await Feeds.create(req.body);
+    }
+    if (type === "Comment") {
+      result = await Comment.create(req.body);
+      const feedsId = req.body.feed;
+      await Feeds.findByIdAndUpdate(feedsId, { $inc: { commentsCount: 1 } });
+    }
     sendSuccess(
       res,
       StatusCodes.CREATED,
-      feeds,
-      "Your feed has been created successfully",
+      result,
+      `Your ${type} has been created successfully`,
     );
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
