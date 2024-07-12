@@ -1,12 +1,12 @@
 const Likes = require("../models/Likes");
 const { StatusCodes } = require("http-status-codes");
-const CustomError = require("../errors");
-const path = require("path");
 const Feeds = require("../models/Feeds");
 const User = require("../models/User");
 const BookMark = require("../models/BookMark");
 const { checkPermissions } = require("../utils");
 const { sendSuccess } = require("../utils/FormatResponse");
+const Notification = require("../models/Notification");
+const { ActionEnum } = require("../utils/data");
 
 const BookMarkFeed = async (req, res) => {
   try {
@@ -36,6 +36,15 @@ const BookMarkFeed = async (req, res) => {
       user: userId,
       bookmarkedItem: feedId,
       type: itemType,
+    });
+    const feedDetails = await Feeds.findById(feedId);
+    const feedUser = feedDetails.user;
+    await Notification.create({
+      sender: userId,
+      receiver: feedUser,
+      content: feedId,
+      type: itemType,
+      action: ActionEnum.BOOKMARK,
     });
     sendSuccess(
       res,

@@ -1,11 +1,5 @@
 const mongoose = require("mongoose");
-
-const ActionEnum = Object.freeze({
-  LIKE: "like",
-  COMMENT: "comment",
-  SHARE: "share",
-  FOLLOW: "follow",
-});
+const { ActionEnum } = require("../utils/data");
 
 const NotificationSchema = new mongoose.Schema(
   {
@@ -22,18 +16,20 @@ const NotificationSchema = new mongoose.Schema(
     content: {
       type: mongoose.Types.ObjectId,
       ref: "Feed",
+    },
+    type: {
+      type: String,
+      enum: ["Comment", "Feed"],
+    },
+    action: {
+      type: String,
+      enum: Object.values(ActionEnum),
       required: true,
     },
-    action: [
-      {
-        type: String,
-        enum: Object.values(ActionEnum),
-        required: true,
-      },
-    ],
     status: {
       type: String,
       default: "unread",
+      enum: ["unread", "read"],
     },
   },
   {

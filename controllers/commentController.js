@@ -2,12 +2,13 @@ const Comment = require("../models/Comments");
 const Feeds = require("../models/Feeds");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const path = require("path");
 const { checkPermissions } = require("../utils");
 const { sendSuccess } = require("../utils/FormatResponse");
+const Notification = require("../models/Notification");
+const { ActionEnum } = require("../utils/data");
 
 const createComments = async (req, res) => {
-  req.body.user = req.user.userId;
+  const userId = req.user.userId;
   const feedsId = req.body.feed;
   //   TODO 感觉不需要check
   const isValidComment = await Feeds.findOne({ _id: feedsId });
@@ -16,6 +17,15 @@ const createComments = async (req, res) => {
   }
   const comments = await Comment.create(req.body);
   await Feeds.findByIdAndUpdate(feedsId, { $inc: { commentsCount: 1 } });
+  const feedDetails = await Feeds.findById(feedId);
+  const feedUser = feedDetails.user;
+  await Notification.create({
+    sender: userId,
+    receiver: feedUser,
+    content: feedId,
+    type: "Comment",
+    action: ActionEnum.COMMENT,
+  });
   sendSuccess(
     res,
     StatusCodes.CREATED,

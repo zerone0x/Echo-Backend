@@ -13,6 +13,7 @@ const commentRouter = require("./routes/commentRoute");
 const bookmarkRouter = require("./routes/bookmarkRoute");
 const likesRouter = require("./routes/likesRoute");
 const followRouter = require("./routes/followRoute");
+const notificationRouter = require("./routes/notificationRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
@@ -30,6 +31,7 @@ const User = require("./models/User");
 const Feeds = require("./models/Feeds");
 const BookMark = require("./models/BookMark");
 const Likes = require("./models/Likes");
+const Notification = require("./models/Notification");
 const corsOptions = {
   origin: process.env.FE_ORIGIN,
   credentials: true,
@@ -56,12 +58,9 @@ app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
-// app.use(express.static("./public"));
-// app.use(fileUpload());
-
 // routes
 app.get("/", (req, res) => {
-  res.send("hi");
+  res.send("ECHO BackEnd");
 });
 
 app.use("/api/v1/auth", authRouter);
@@ -71,6 +70,7 @@ app.use("/api/v1/like", likesRouter);
 app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/bookmark", bookmarkRouter);
 app.use("/api/v1/follow", followRouter);
+app.use("/api/v1/notification", notificationRouter);
 
 const Port = process.env.PORT || 8080;
 const start = async () => {
@@ -89,7 +89,9 @@ const start = async () => {
     //   { $set: { Banner: newImageUrl } } // update operation
     // );
     const feedCount = await Feeds.countDocuments({});
+    const notificationsCount = await Notification.countDocuments({});
     console.log(`Total feeds: ${feedCount}`);
+    console.log(`Notifications Count: ${notificationsCount}`);
     // console.log(result); // This will log the outcome of the update operation
     app.listen(Port, console.log(`Server running on port ${Port}`));
   } catch (error) {

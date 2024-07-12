@@ -3,12 +3,13 @@ const User = require("../models/User");
 const Comment = require("../models/Comments");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const path = require("path");
+
 const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const BookMark = require("../models/BookMark");
 const Likes = require("../models/Likes");
 const paginate = require("../utils/paginate");
+const Notification = require("../models/Notification");
 
 const createFeeds = async (req, res) => {
   try {

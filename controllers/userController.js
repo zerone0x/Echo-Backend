@@ -9,6 +9,8 @@ const {
   checkPermissions,
   isTokenValid,
 } = require("../utils");
+const { CreateNewNotification } = require("./notificationController");
+const { Notification, ActionEnum } = require("../models/Notification");
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
@@ -42,6 +44,7 @@ const addFollowers = async (req, res) => {
   const follower = await User.findById(followerId);
   if (!follower.Following.includes(idolId)) {
     follower.Following.push(idolId);
+    await CreateNewNotification(followerId, idolId, null, ActionEnum.FOLLOW);
     await follower.save();
   }
   res.status(StatusCodes.OK).json({ msg: "Success! Followers Added." });

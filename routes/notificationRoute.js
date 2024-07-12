@@ -1,18 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const {
-  LikeFeed,
-  CreateLikesComment,
-  getAllLikesByUserId,
-  getIsLiked,
-} = require("../controllers/likesController");
+  GetAllNotifications,
+  MarkRead,
+} = require("../controllers/notificationController");
 
 const {
   authenticateUser,
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router.route("/likedfeed").post([authenticateUser], LikeFeed);
-router.route("/getAllLikes").get([authenticateUser], getAllLikesByUserId);
-router.route("/getIsLiked/:feedId").get([authenticateUser], getIsLiked);
+router
+  .route("/GetAllNotifications")
+  .get([authenticateUser], GetAllNotifications);
+router.route("/MarkRead").post([authenticateUser], MarkRead);
 module.exports = router;

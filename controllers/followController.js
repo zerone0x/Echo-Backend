@@ -1,9 +1,12 @@
 const Follow = require("../models/Follow");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { checkPermissions } = require("../utils");
 const { sendSuccess } = require("../utils/FormatResponse");
+const { CreateNewNotification } = require("./notificationController");
+const { ActionEnum } = require("../utils/data");
 
 const AddFollowing = async (req, res) => {
   try {
@@ -33,6 +36,11 @@ const AddFollowing = async (req, res) => {
     const followPattern = await Follow.create({
       followed: idolId,
       follower: userId,
+    });
+    await Notification.create({
+      sender: userId,
+      receiver: idolId,
+      action: ActionEnum.FOLLOW,
     });
     sendSuccess(
       res,

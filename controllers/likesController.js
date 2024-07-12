@@ -4,6 +4,8 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { checkPermissions } = require("../utils");
 const { sendSuccess } = require("../utils/FormatResponse");
+const Notification = require("../models/Notification");
+const { ActionEnum } = require("../utils/data");
 
 const LikeFeed = async (req, res) => {
   try {
@@ -41,6 +43,15 @@ const LikeFeed = async (req, res) => {
     if (itemType === "Comment") {
       await Comment.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
     }
+    const feedDetails = await Feed.findById(feedId);
+    const feedUser = feedDetails.user;
+    await Notification.create({
+      sender: userId,
+      receiver: feedUser,
+      content: feedId,
+      type: itemType,
+      action: ActionEnum.LIKE,
+    });
     sendSuccess(
       res,
       StatusCodes.CREATED,
