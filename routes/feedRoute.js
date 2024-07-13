@@ -19,21 +19,13 @@ const {
 
 router
   .route("/")
-  .post(
-    [authenticateUser],
-    upload.array("image", 4),
-    checkFileSize,
-    createFeeds,
-  )
-  .get([authenticateUser], getAllFeeds);
+  .post(authenticateUser, upload.array("image", 4), checkFileSize, createFeeds)
+  .get(authenticateUser, getAllFeeds);
 
 router.route("/user/:username").get(getFeedByUsername);
 router.route("/user/:userId").get(getFeedByUserId);
 router.route("/searchFeeds").post(searchFeeds);
 
-router
-  .route("/:id")
-  .get(getFeedById)
-  .delete([authenticateUser], deleteFeedById);
+router.route("/:id").get(getFeedById).delete(authenticateUser, deleteFeedById);
 
 module.exports = router;

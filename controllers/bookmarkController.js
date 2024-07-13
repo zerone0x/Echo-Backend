@@ -4,7 +4,7 @@ const Feeds = require("../models/Feeds");
 const User = require("../models/User");
 const BookMark = require("../models/BookMark");
 const { checkPermissions } = require("../utils");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const Notification = require("../models/Notification");
 const { ActionEnum } = require("../utils/data");
 
@@ -53,9 +53,7 @@ const BookMarkFeed = async (req, res) => {
       `${itemType} bookmarked successfully`,
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || `Failed to bookmark ${itemType}`,
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -80,12 +78,11 @@ const getAllBookmarksByUserId = async (req, res) => {
       res,
       StatusCodes.OK,
       bookmarks,
-      `${itemType} Bookmarks fetched successfully`,
+      `Bookmarks fetched successfully`,
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER).send({
-      message: error.message || `Failed to fetch ${itemType} bookmarks`,
-    });
+    // TODO refactor by this
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -102,12 +99,9 @@ const getIsBooked = async (req, res) => {
     const result = !!isBooked;
     sendSuccess(res, StatusCodes.OK, result, `your ${itemType} book status`);
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || `Failed to fetch your ${itemType}`,
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
-
 module.exports = {
   BookMarkFeed,
   CancelBookMarkFeed,

@@ -10,8 +10,6 @@ const {
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router
-  .route("/GetAllNotifications")
-  .get([authenticateUser], GetAllNotifications);
-router.route("/MarkRead").post([authenticateUser], MarkRead);
+router.route("/GetAllNotifications").get(authenticateUser, GetAllNotifications);
+router.route("/MarkRead").post(authenticateUser, MarkRead);
 module.exports = router;

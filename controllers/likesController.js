@@ -1,9 +1,8 @@
 const Likes = require("../models/Likes");
 const Feed = require("../models/Feeds");
 const { StatusCodes } = require("http-status-codes");
-const CustomError = require("../errors");
 const { checkPermissions } = require("../utils");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const Notification = require("../models/Notification");
 const { ActionEnum } = require("../utils/data");
 
@@ -59,9 +58,7 @@ const LikeFeed = async (req, res) => {
       `${itemType} liked successfully`,
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || `Failed to like ${itemType}`,
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -78,9 +75,7 @@ const getIsLiked = async (req, res) => {
     const result = !!isLiked;
     sendSuccess(res, StatusCodes.OK, result, `your ${itemType} like status`);
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || `Failed to fetch your ${itemType}`,
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -101,12 +96,10 @@ const getAllLikesByUserId = async (req, res) => {
       res,
       StatusCodes.OK,
       likeFeeds,
-      `${itemType} feeds fetched successfully`,
+      `liked feeds fetched successfully`,
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER).send({
-      message: error.message || `Failed to fetch ${itemType} feeds`,
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 

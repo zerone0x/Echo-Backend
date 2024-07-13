@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ActionEnum } = require("../utils/data");
 
 const BookMarkSchema = new mongoose.Schema(
   {
@@ -20,6 +21,20 @@ const BookMarkSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+);
+
+BookMarkSchema.pre(
+  "deleteOne",
+  { document: false, query: true },
+  async function (next) {
+    const query = this.getQuery();
+    const user = query.user;
+    const bookmarkedItem = query.bookmarkedItem;
+    if (bookmarkedItem) {
+      await mongoose.model("Notification").deleteMany({ action: ActionEnum.BOOKMARK, sender: user, content: bookmarkedItem });
+    }
+    next();
   },
 );
 

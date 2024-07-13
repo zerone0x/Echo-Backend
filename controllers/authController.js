@@ -2,54 +2,65 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { attachCookiesToResponse, createTokenUser } = require("../utils/index");
-const passport = require("passport");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 
 const register = async (req, res) => {
-  const { email, name, password } = req.body;
-  const ifEmailExist = await User.findOne({ email });
-  if (ifEmailExist) {
-    throw new CustomError.BadRequestError("Email already exist");
+  try {
+    const { email, name, password } = req.body;
+    const ifEmailExist = await User.findOne({ email });
+    if (ifEmailExist) {
+      throw new CustomError.BadRequestError("Email already exist");
+    }
+    const isFirstUser = (await User.countDocuments({})) === 0;
+    const role = isFirstUser ? "admin" : "user";
+    const user = await User.create({ email, name, password, role });
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    const resUser = { user: user, tokenUser: tokenUser };
+    sendSuccess(
+      res,
+      StatusCodes.CREATED,
+      resUser,
+      "Your account registered successfully",
+    );
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
-  const isFirstUser = (await User.countDocuments({})) === 0;
-  const role = isFirstUser ? "admin" : "user";
-  const user = await User.create({ email, name, password, role });
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-  const resUser = { user: user, tokenUser: tokenUser };
-  sendSuccess(
-    res,
-    StatusCodes.CREATED,
-    resUser,
-    "Your account registered successfully",
-  );
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new CustomError.BadRequestError("Please provide email and password");
-  }
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new CustomError.UnauthenticatedError("Invalid Credentials of email");
-  }
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    throw new CustomError.UnauthenticatedError(
-      "Invalid Credentials of password",
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new CustomError.BadRequestError(
+        "Please provide email and password",
+      );
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new CustomError.UnauthenticatedError(
+        "Invalid Credentials of email",
+      );
+    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      throw new CustomError.UnauthenticatedError(
+        "Invalid Credentials of password",
+      );
+    }
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    req.session.user = user;
+    const resUser = { user: user, tokenUser: tokenUser };
+    sendSuccess(
+      res,
+      StatusCodes.CREATED,
+      resUser,
+      "Your account logined successfully",
     );
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-  req.session.user = user;
-  const resUser = { user: user, tokenUser: tokenUser };
-  sendSuccess(
-    res,
-    StatusCodes.CREATED,
-    resUser,
-    "Your account logined successfully",
-  );
 };
 
 const RedirectGoogle = (req, res) => {

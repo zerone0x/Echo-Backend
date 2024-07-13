@@ -42,6 +42,22 @@ CommentSchema.pre("save", function (next) {
     next();
   }
 });
+
+CommentSchema.pre(
+  "deleteOne",
+  { document: false, query: true },
+  async function (next) {
+    const query = this.getQuery();
+    const feedId = query._id;
+    if (feedId) {
+      await mongoose.model("BookMark").deleteMany({ bookmarkedItem: feedId, type: "Comment" });
+      await mongoose.model("Likes").deleteMany({ bookmarkedItem: feedId, type: "Comment" });
+      await mongoose.model("Notification").deleteMany({ content: feedId, type: "Comment" });
+    }
+    next();
+  },
+);
+
 // CommentSchema.statics.calculateCommentLen = async function (feed) {
 //   console.log(feed);
 // }

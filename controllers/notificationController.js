@@ -37,6 +37,11 @@ const MarkRead = async (req, res) => {
   }
 };
 
+const GetIsRead = async (req, res) => {
+  try {
+  } catch (error) {}
+};
+
 module.exports = {
   GetAllNotifications,
   MarkRead,

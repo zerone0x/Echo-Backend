@@ -3,7 +3,6 @@ const User = require("../models/User");
 const Comment = require("../models/Comments");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-
 const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const BookMark = require("../models/BookMark");
@@ -36,7 +35,7 @@ const createFeeds = async (req, res) => {
       `Your ${type} has been created successfully`,
     );
   } catch (error) {
-    res.status(error.statusCode || 500).json({ message: error.message });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -65,9 +64,7 @@ const getAllFeeds = async (req, res) => {
       "Your feed fetched successfully",
     );
   } catch (error) {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: "Error fetching feeds", error: error.message });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -99,10 +96,14 @@ const getFeedById = async (req, res) => {
 };
 
 const getFeedByUserId = async (req, res) => {
-  const feeds = await Feeds.find({ user: req.params.userId })
-    .populate("comments")
-    .sort({ createdAt: -1 });
-  sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
+  try {
+    const feeds = await Feeds.find({ user: req.params.userId })
+      .populate("comments")
+      .sort({ createdAt: -1 });
+    sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
+  }
 };
 
 const getFeedByUsername = async (req, res) => {
@@ -121,7 +122,7 @@ const getFeedByUsername = async (req, res) => {
       .sort({ createdAt: -1 });
     sendSuccess(res, StatusCodes.OK, feeds, "Your feeds fetched successfully");
   } catch (error) {
-    console.log(error);
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -131,46 +132,54 @@ const updateFeedById = async (req, res) => {
 };
 
 const deleteFeedById = async (req, res) => {
-  const feedId = req.params.id;
-  const feed = await Feeds.findById(feedId);
+  try {
+    const feedId = req.params.id;
+    const feed = await Feeds.findById(feedId);
 
-  if (!feed) {
-    throw new CustomError.NotFoundError("Feed not found");
+    if (!feed) {
+      throw new CustomError.NotFoundError("Feed not found");
+    }
+    checkPermissions(req.user, feed.user);
+    await feed.deleteOne();
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      null,
+      "Your feed and related data deleted successfully",
+    );
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
-  checkPermissions(req.user, feed.user);
-  await feed.deleteOne();
-  sendSuccess(
-    res,
-    StatusCodes.OK,
-    null,
-    "Your feed and related data deleted successfully",
-  );
 };
 
 const searchFeeds = async (req, res) => {
-  const keyword = req.body.keyword;
-  const feeds = await Feeds.find({
-    content: new RegExp(keyword, "i"),
-  })
-    .populate({
-      path: "user",
-      select: "-password",
+  try {
+    const keyword = req.body.keyword;
+    const feeds = await Feeds.find({
+      content: new RegExp(keyword, "i"),
     })
-    .sort({ createdAt: -1 });
-  const user = await User.find({ name: new RegExp(keyword, "i") });
-  const comments = await Comment.find({ content: new RegExp(keyword, "i") })
-    .populate({
-      path: "user",
-      select: "-password",
-    })
-    .sort({ createdAt: -1 });
-  const searchRes = { feeds: feeds, user: user, comments: comments };
-  sendSuccess(
-    res,
-    StatusCodes.OK,
-    searchRes,
-    "Your search result fetched successfully",
-  );
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .sort({ createdAt: -1 });
+    const user = await User.find({ name: new RegExp(keyword, "i") });
+    const comments = await Comment.find({ content: new RegExp(keyword, "i") })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .sort({ createdAt: -1 });
+    const searchRes = { feeds: feeds, user: user, comments: comments };
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      searchRes,
+      "Your search result fetched successfully",
+    );
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
+  }
 };
 
 const uploadImage = async (req) => {

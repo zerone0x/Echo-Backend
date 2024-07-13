@@ -103,6 +103,20 @@ UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
+UserSchema.pre(
+  "deleteOne",
+  { document: false, query: true },
+  async function (next) {
+    const query = this.getQuery();
+    const user = query._id;
+    if (user) {
+      await mongoose.model("Notification").deleteMany({ sender: user });
+      await mongoose.model("Notification").deleteMany({ receiver: user });
+    }
+    next();
+  },
+);
+
 UserSchema.methods.comparePassword = async function (Password) {
   if (this.googleId || this.githubId) {
     return;

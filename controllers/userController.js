@@ -28,30 +28,6 @@ const getUserByName = async (req, res) => {
   sendSuccess(res, StatusCodes.OK, user, "This user fetched successfully");
 };
 
-const addFollowers = async (req, res) => {
-  const followerId = req.user.userId;
-  const { idolId } = req.body;
-  if (idolId === followerId) {
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ msg: "You can't follow yourself" });
-  }
-  const user = await User.findById(idolId);
-  if (!user.Followers.includes(followerId)) {
-    user.Followers.push(followerId);
-    await user.save();
-  }
-  const follower = await User.findById(followerId);
-  if (!follower.Following.includes(idolId)) {
-    follower.Following.push(idolId);
-    await CreateNewNotification(followerId, idolId, null, ActionEnum.FOLLOW);
-    await follower.save();
-  }
-  res.status(StatusCodes.OK).json({ msg: "Success! Followers Added." });
-};
-
-const RemoveFollowers = async (req, res) => {};
-
 const getSingleUser = async (req, res) => {
   const user = await User.findById(req.params.id).select("-password");
   if (!user) {
@@ -133,7 +109,5 @@ module.exports = {
   getSingleUser,
   showCurrUser,
   updateUser,
-  addFollowers,
-  RemoveFollowers,
   updateUserPwd,
 };

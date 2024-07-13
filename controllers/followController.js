@@ -4,7 +4,7 @@ const Notification = require("../models/Notification");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { checkPermissions } = require("../utils");
-const { sendSuccess } = require("../utils/FormatResponse");
+const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const { CreateNewNotification } = require("./notificationController");
 const { ActionEnum } = require("../utils/data");
 
@@ -49,9 +49,7 @@ const AddFollowing = async (req, res) => {
       "your follow created successfully",
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to follow your mate",
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -75,9 +73,7 @@ const getFollowing = async (req, res) => {
       "your following fetched successfully",
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to fetch your following",
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -101,9 +97,7 @@ const getFans = async (req, res) => {
       "your followedPpl fetched successfully",
     );
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to fetch your followedPpl",
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 
@@ -119,9 +113,7 @@ const getIsFollowed = async (req, res) => {
     const result = isFollowed ? true : false;
     sendSuccess(res, StatusCodes.OK, result, `your followed ta`);
   } catch (error) {
-    res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).send({
-      message: error.message || "Failed to fetch your follow status",
-    });
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
   }
 };
 

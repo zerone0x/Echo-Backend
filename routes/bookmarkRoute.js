@@ -12,8 +12,8 @@ const {
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router.route("/booked").post([authenticateUser], BookMarkFeed);
-router.route("/cancelbooked").post([authenticateUser], CancelBookMarkFeed);
+router.route("/booked").post(authenticateUser, BookMarkFeed);
+router.route("/cancelbooked").post(authenticateUser, CancelBookMarkFeed);
 router
   .route("/getAllBookMark")
   .get([authenticateUser], getAllBookmarksByUserId);
