@@ -15,7 +15,9 @@ const NotificationSchema = new mongoose.Schema(
     },
     content: {
       type: mongoose.Types.ObjectId,
-      ref: "Feed",
+      ref: function (doc) {
+        return doc.type === "Comment" ? "Comment" : "Feed";
+      },
     },
     type: {
       type: String,

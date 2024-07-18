@@ -1,6 +1,6 @@
 # Echo Social API
 
-![Node.Js](https://img.shields.io/badge/node.js-339933?style=flat&logo=Node.js&logoColor=white)![Express.Js](https://img.shields.io/badge/Express%20js-000000?style=flat&logo=express&logoColor=white)![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=JSON%20web%20tokens)![Javascript](https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=000&style=flat)![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=flat&logo=tailwind-css&logoColor=white) ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white) ![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=white)
+![Node.Js](https://img.shields.io/badge/node.js-339933?style=flat&logo=Node.js&logoColor=white)![Express.Js](https://img.shields.io/badge/Express%20js-000000?style=flat&logo=express&logoColor=white)![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=JSON%20web%20tokens)![Javascript](https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=000&style=flat)![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white) ![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=white)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/zerone0x/Echo-Frontend) ![GitHub last commit](https://img.shields.io/github/last-commit/zerone0x/Echo-Frontend)
 ![GitHub](https://img.shields.io/github/license/zerone0x/Echo-Frontend)
@@ -11,7 +11,7 @@ Welcome to Echo Social BackEnd, a Mastodon-like platform that amplifies your voi
 
 ### 🚧 Under Construction
 
-Please note that Echo Social is still in active development. 
+Please note that Echo Social is still in active development.
 
 ## About Echo Social
 

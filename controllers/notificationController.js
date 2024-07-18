@@ -6,9 +6,19 @@ const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const GetAllNotifications = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const notifications = await Notification.find({ receiver: userId }).sort({
-      createdAt: -1,
-    });
+    const notifications = await Notification.find({ receiver: userId })
+      .populate([
+        {
+          path: "sender",
+          select: "-password",
+        },
+        {
+          path: "content",
+        },
+      ])
+      .sort({
+        createdAt: -1,
+      });
     sendSuccess(
       res,
       StatusCodes.OK,
