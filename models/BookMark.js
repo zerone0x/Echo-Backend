@@ -32,7 +32,11 @@ BookMarkSchema.pre(
     const user = query.user;
     const bookmarkedItem = query.bookmarkedItem;
     if (bookmarkedItem) {
-      await mongoose.model("Notification").deleteMany({ action: ActionEnum.BOOKMARK, sender: user, content: bookmarkedItem });
+      await mongoose.model("Notification").deleteMany({
+        action: ActionEnum.BOOKMARK,
+        sender: user,
+        content: bookmarkedItem,
+      });
     }
     next();
   },

@@ -31,7 +31,11 @@ LikesSchema.pre(
     const user = query.user;
     const bookmarkedItem = query.bookmarkedItem;
     if (bookmarkedItem) {
-      await mongoose.model("Notification").deleteMany({ action: ActionEnum.LIKE, sender: user, content: bookmarkedItem });
+      await mongoose.model("Notification").deleteMany({
+        action: ActionEnum.LIKE,
+        sender: user,
+        content: bookmarkedItem,
+      });
     }
     next();
   },

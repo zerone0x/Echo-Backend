@@ -68,9 +68,15 @@ FeedsSchema.pre(
     const feedId = query._id;
     if (feedId) {
       await mongoose.model("Comment").deleteMany({ feed: feedId });
-      await mongoose.model("BookMark").deleteMany({ bookmarkedItem: feedId, type: "Feed" });
-      await mongoose.model("Likes").deleteMany({ bookmarkedItem: feedId, type: "Feed" });
-      await mongoose.model("Notification").deleteMany({ content: feedId, type: "Feed" });
+      await mongoose
+        .model("BookMark")
+        .deleteMany({ bookmarkedItem: feedId, type: "Feed" });
+      await mongoose
+        .model("Likes")
+        .deleteMany({ bookmarkedItem: feedId, type: "Feed" });
+      await mongoose
+        .model("Notification")
+        .deleteMany({ content: feedId, type: "Feed" });
     }
     next();
   },

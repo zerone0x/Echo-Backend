@@ -26,7 +26,11 @@ FollowSchema.pre(
     const query = this.getQuery();
     const followed = query.followed;
     const follower = query.follower;
-    await mongoose.model("Notification").deleteMany({ action: ActionEnum.FOLLOW, receiver: followed, sender: follower });
+    await mongoose.model("Notification").deleteMany({
+      action: ActionEnum.FOLLOW,
+      receiver: followed,
+      sender: follower,
+    });
     next();
   },
 );
