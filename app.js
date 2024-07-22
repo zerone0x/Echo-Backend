@@ -33,24 +33,26 @@ const BookMark = require("./models/BookMark");
 const Likes = require("./models/Likes");
 const Notification = require("./models/Notification");
 const corsOptions = {
-  origin: process.env.FE_ORIGIN,
+  origin: [process.env.FE_ORIGIN, process.env.FE_STG_ORIGIN],
   credentials: true,
   optionsSuccessStatus: 200,
   allowedHeaders: ["Authorization", "Content-Type"], // Explicitly allow these headers
 };
 app.use(cors(corsOptions));
 
-app.use(
-  expressSession({
-    secret: process.env.SESSION_KEY,
-    cookie: {
-      maxAge: 3000,
-    },
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  }),
-);
+// app.use(
+//   expressSession({
+//     secret: process.env.SESSION_KEY,
+//     cookie: {
+//       maxAge: 3000,
+//       // secure: process.env.NODE_ENV === "production",
+//       // sameSite: "None",
+//       // partitioned: true,
+//     },
+//     resave: false,
+//     saveUninitialized: true,
+//   }),
+// );
 
 // log the requests
 app.use(morgan("tiny"));

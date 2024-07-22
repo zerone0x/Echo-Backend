@@ -50,7 +50,7 @@ const login = async (req, res) => {
     }
     const tokenUser = createTokenUser(user);
     attachCookiesToResponse({ res, user: tokenUser });
-    req.session.user = user;
+    // req.session.user = user;
     const resUser = { user: user, tokenUser: tokenUser };
     sendSuccess(
       res,
@@ -67,10 +67,10 @@ const RedirectGoogle = (req, res) => {
   const user = req.user;
   const tokenUser = createTokenUser(user);
   attachCookiesToResponse({ res, user: tokenUser });
-  req.session.user = user;
+  // req.session.user = user;
   const resUser = { user: user, tokenUser: tokenUser };
   if (user) {
-    res.redirect(process.env.FE_URL);
+    res.redirect(process.env.NODE_ENV === 'production' ? process.env.FE_URL : process.env.FE_STG_URL);
   } else {
     res.send(req.user);
   }
@@ -82,7 +82,7 @@ const RedirectGithub = async (req, res) => {
   attachCookiesToResponse({ res, user: tokenUser });
   const resUser = { user: user, tokenUser: tokenUser };
   if (user) {
-    res.redirect(process.env.FE_URL);
+    res.redirect(process.env.NODE_ENV === 'production' ? process.env.FE_URL : process.env.FE_STG_URL);
   } else {
     res.send(req.user);
   }

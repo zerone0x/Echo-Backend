@@ -16,8 +16,10 @@ const attachCookiesToResponse = ({ res, user }) => {
     httpOnly: true,
     expires: new Date(Date.now() + day),
     secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+    partitioned: true,
     signed: true,
-  });
+  }); 
 };
 
 module.exports = {
