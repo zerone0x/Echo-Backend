@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const { attachCookiesToResponse, createTokenUser } = require("../utils/index");
+const { attachCookiesToResponse, createTokenUser, createJWT } = require("../utils/index");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 
 const register = async (req, res) => {
@@ -15,8 +15,8 @@ const register = async (req, res) => {
     const role = isFirstUser ? "admin" : "user";
     const user = await User.create({ email, name, password, role });
     const tokenUser = createTokenUser(user);
-    attachCookiesToResponse({ res, user: tokenUser });
-    const resUser = { user: user, tokenUser: tokenUser };
+    const token =attachCookiesToResponse({ res, user: tokenUser });
+    const resUser = { user: user, tokenUser: tokenUser, token: token  };
     sendSuccess(
       res,
       StatusCodes.CREATED,
@@ -49,9 +49,8 @@ const login = async (req, res) => {
       );
     }
     const tokenUser = createTokenUser(user);
-    attachCookiesToResponse({ res, user: tokenUser });
-    // req.session.user = user;
-    const resUser = { user: user, tokenUser: tokenUser };
+    const token =attachCookiesToResponse({ res, user: tokenUser });
+    const resUser = { user: user, tokenUser: tokenUser, token: token  };
     sendSuccess(
       res,
       StatusCodes.CREATED,

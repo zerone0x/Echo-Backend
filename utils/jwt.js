@@ -20,6 +20,7 @@ const attachCookiesToResponse = ({ res, user }) => {
     partitioned: true,
     signed: true,
   }); 
+  return token
 };
 
 module.exports = {

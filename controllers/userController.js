@@ -18,14 +18,15 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUserByName = async (req, res) => {
-  const username = req.params.username;
+  try {
+    const username = req.params.username;
   const user = await User.findOne({ role: "user", name: username }).select(
     "-password",
   );
-  if (!user) {
-    sendFail(res, StatusCodes.NOT_FOUND, null, "User not found");
-  }
   sendSuccess(res, StatusCodes.OK, user, "This user fetched successfully");
+  } catch (error) {
+    sendFail(res, StatusCodes.UNAUTHORIZED, error.message, error.message);
+  }
 };
 
 const getSingleUser = async (req, res) => {
@@ -40,7 +41,6 @@ const getSingleUser = async (req, res) => {
 const showCurrUser = async (req, res) => {
   // const currUser = { user: req.user };
   try {
-    console.log(req);
     const token = req.signedCookies.token;
     // if(!token){
     //   throw new CustomError.BadRequestError("Please login or signup");

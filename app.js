@@ -36,7 +36,7 @@ const corsOptions = {
   origin: [process.env.FE_ORIGIN, process.env.FE_STG_ORIGIN],
   credentials: true,
   optionsSuccessStatus: 200,
-  allowedHeaders: ["Authorization", "Content-Type"], // Explicitly allow these headers
+  allowedHeaders: ["Authorization", "Content-Type"], 
 };
 app.use(cors(corsOptions));
 
