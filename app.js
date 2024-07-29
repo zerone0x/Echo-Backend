@@ -40,19 +40,19 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// app.use(
-//   expressSession({
-//     secret: process.env.SESSION_KEY,
-//     cookie: {
-//       maxAge: 3000,
-//       // secure: process.env.NODE_ENV === "production",
-//       // sameSite: "None",
-//       // partitioned: true,
-//     },
-//     resave: false,
-//     saveUninitialized: true,
-//   }),
-// );
+app.use(
+  expressSession({
+    secret: process.env.SESSION_KEY,
+    cookie: {
+      maxAge: 3000,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+      partitioned: true,
+    },
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
 
 // log the requests
 app.use(morgan("tiny"));
