@@ -7,6 +7,7 @@ const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const Notification = require("../models/Notification");
 const { ActionEnum } = require("../utils/data");
+const Comments = require("../models/Comments");
 
 const BookMarkFeed = async (req, res) => {
   try {
@@ -37,8 +38,13 @@ const BookMarkFeed = async (req, res) => {
       bookmarkedItem: feedId,
       type: itemType,
     });
-    const feedDetails = await Feeds.findById(feedId);
-    const feedUser = feedDetails.user;
+    let feedDetails;
+    if (itemType === "Comment") {
+      feedDetails = await Comments.findById(feedId);
+    } else {
+      feedDetails = await Feeds.findById(feedId);
+    }
+    const feedUser = feedDetails?.user;
     await Notification.create({
       sender: userId,
       receiver: feedUser,
@@ -90,7 +96,7 @@ const getIsBooked = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.params.feedId;
-    const itemType = req.body.itemType;
+    const itemType = req.params.itemType;
     const isBooked = await BookMark.findOne({
       user: userId,
       bookmarkedItem: feedId,

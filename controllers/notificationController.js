@@ -13,16 +13,25 @@ const GetAllNotifications = async (req, res) => {
           select: "-password",
         },
         {
+          path: "receiver",
+          select: "-password",
+        },
+        {
           path: "content",
         },
       ])
       .sort({
         createdAt: -1,
       });
+    const unreadCount = await Notification.countDocuments({
+      receiver: userId,
+      status: "unread",
+      action: { $ne: "bookmark" },
+    });
     sendSuccess(
       res,
       StatusCodes.OK,
-      notifications,
+      { notifications, unreadCount },
       "Your notifications fetched successfully",
     );
   } catch (error) {
@@ -47,7 +56,7 @@ const MarkRead = async (req, res) => {
   }
 };
 
-const GetIsRead = async (req, res) => {
+const GetUnReadCount = async (req, res) => {
   try {
   } catch (error) {}
 };

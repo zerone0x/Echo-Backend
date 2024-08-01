@@ -1,5 +1,6 @@
 const Likes = require("../models/Likes");
 const Feed = require("../models/Feeds");
+const Comment = require("../models/Comments");
 const { StatusCodes } = require("http-status-codes");
 const { checkPermissions } = require("../utils");
 const { sendSuccess, sendFail } = require("../utils/FormatResponse");
@@ -22,12 +23,6 @@ const LikeFeed = async (req, res) => {
         bookmarkedItem: feedId,
         type: itemType,
       });
-      if (itemType === "Feed") {
-        await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
-      }
-      if (itemType === "Comment") {
-        await Comment.findByIdAndUpdate(feedId, { $inc: { likesCount: -1 } });
-      }
       sendSuccess(res, StatusCodes.OK, likesFeeds, "Feed unliked successfully");
       return;
     }
@@ -36,13 +31,15 @@ const LikeFeed = async (req, res) => {
       bookmarkedItem: feedId,
       type: itemType,
     });
+    let feedDetails;
     if (itemType === "Feed") {
       await Feed.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
+      feedDetails = await Feed.findById(feedId);
     }
     if (itemType === "Comment") {
       await Comment.findByIdAndUpdate(feedId, { $inc: { likesCount: 1 } });
+      feedDetails = await Comment.findById(feedId);
     }
-    const feedDetails = await Feed.findById(feedId);
     const feedUser = feedDetails.user;
     await Notification.create({
       sender: userId,
@@ -66,7 +63,7 @@ const getIsLiked = async (req, res) => {
   try {
     const userId = req.user.userId;
     const feedId = req.params.feedId;
-    const itemType = req.body.itemType;
+    const itemType = req.params.itemType;
     const isLiked = await Likes.findOne({
       user: userId,
       bookmarkedItem: feedId,

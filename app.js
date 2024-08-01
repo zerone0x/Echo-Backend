@@ -18,6 +18,7 @@ const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
 const multer = require("multer");
+// const proxy = require("./middlewares/proxy");
 // // passport
 // app.use(passport.initialize())
 // app.use(passport.session())
@@ -36,7 +37,7 @@ const corsOptions = {
   origin: [process.env.FE_ORIGIN, process.env.FE_STG_ORIGIN],
   credentials: true,
   optionsSuccessStatus: 200,
-  allowedHeaders: ["Authorization", "Content-Type"], 
+  allowedHeaders: ["Authorization", "Content-Type"],
 };
 app.use(cors(corsOptions));
 
@@ -65,6 +66,7 @@ app.get("/", (req, res) => {
   res.send("ECHO BackEnd");
 });
 
+// app.use('/api', proxy);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/feeds", feedRouter);

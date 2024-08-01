@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const {
   BookMarkFeed,
-  CancelBookMarkFeed,
   getAllBookmarksByUserId,
   getIsBooked,
 } = require("../controllers/bookmarkController");
@@ -12,11 +11,12 @@ const {
   authorizePermission,
 } = require("../middlewares/authentication");
 
-router.route("/booked").post(authenticateUser, BookMarkFeed);
-router.route("/cancelbooked").post(authenticateUser, CancelBookMarkFeed);
+router.route("/booked").post([authenticateUser], BookMarkFeed);
 router
   .route("/getAllBookMark")
   .get([authenticateUser], getAllBookmarksByUserId);
-router.route("/getIsBooked/:feedId").get([authenticateUser], getIsBooked);
+router
+  .route("/getIsBooked/:feedId/:itemType")
+  .get([authenticateUser], getIsBooked);
 
 module.exports = router;

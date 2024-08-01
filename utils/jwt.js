@@ -19,8 +19,8 @@ const attachCookiesToResponse = ({ res, user }) => {
     sameSite: "None",
     partitioned: true,
     signed: true,
-  }); 
-  return token
+  });
+  return token;
 };
 
 module.exports = {

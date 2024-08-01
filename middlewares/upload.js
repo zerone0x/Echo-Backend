@@ -27,5 +27,4 @@ const parser = multer({
   },
 });
 
-// 导出 parser
 module.exports = parser;
