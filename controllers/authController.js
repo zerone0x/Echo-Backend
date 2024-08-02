@@ -74,7 +74,7 @@ const RedirectGoogle = (req, res) => {
   const resUser = { user: user, tokenUser: tokenUser };
   if (user) {
     res.redirect(
-      process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === "PRD"
         ? process.env.FE_URL
         : process.env.FE_STG_URL,
     );
@@ -91,7 +91,7 @@ const RedirectGithub = async (req, res) => {
   req.session.user = user;
   if (user) {
     res.redirect(
-      process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === "PRD"
         ? process.env.FE_URL
         : process.env.FE_STG_URL,
     );
@@ -104,7 +104,7 @@ const logout = async (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 10),
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "PRD",
     signed: true,
   });
   sendSuccess(res, StatusCodes.OK, null, "Logout successfully");

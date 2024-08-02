@@ -1,7 +1,12 @@
 const CustomError = require("../errors");
 const { isTokenValid } = require("../utils");
 const authenticateUser = async (req, res, next) => {
-  const token = req.signedCookies.token;
+  const authorizationHeader = req.headers["authorization"];
+  if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Invalid authorization header" });
+  }
+
+  const token = req.signedCookies.token || authorizationHeader.split(" ")[1];
   if (!token) {
     throw new CustomError.UnauthenticatedError("Auth failed");
   }
@@ -10,7 +15,7 @@ const authenticateUser = async (req, res, next) => {
     req.user = { name, email, role, userId };
     next();
   } catch (error) {
-    throw new CustomError.UnauthenticatedError("Auth failed");
+    throw new CustomError.UnauthenticatedError(error);
   }
 };
 const authorizePermission = (...roles) => {

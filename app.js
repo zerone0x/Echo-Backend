@@ -33,6 +33,7 @@ const Feeds = require("./models/Feeds");
 const BookMark = require("./models/BookMark");
 const Likes = require("./models/Likes");
 const Notification = require("./models/Notification");
+const Comment = require("./models/Comments");
 const corsOptions = {
   origin: [process.env.FE_ORIGIN, process.env.FE_STG_ORIGIN],
   credentials: true,
@@ -46,7 +47,7 @@ app.use(
     secret: process.env.SESSION_KEY,
     cookie: {
       maxAge: 3000,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "PRD",
       sameSite: "None",
       partitioned: true,
     },
@@ -80,7 +81,7 @@ const Port = process.env.PORT || 8080;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    // const deletedBookMarks = await BookMark.deleteMany({});
+    // const deletedBookMarks = await Comment.deleteMany({});
     // console.log(`Deleted ${deletedBookMarks.deletedCount} bookmarks.`);
 
     // // 删除Likes集合中的所有数据
@@ -94,6 +95,7 @@ const start = async () => {
     // );
     const feedCount = await Feeds.countDocuments({});
     const notificationsCount = await Notification.countDocuments({});
+    console.log(process.env.NODE_ENV);
     console.log(`Total feeds: ${feedCount}`);
     console.log(`Notifications Count: ${notificationsCount}`);
     // console.log(result); // This will log the outcome of the update operation
