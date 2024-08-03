@@ -20,22 +20,34 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/api/v1/auth/google/redirect",
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // it will execute before redirect
-      User.findOne({ googleId: profile.id }).then((currUser) => {
+      try {
+        let currUser = await User.findOne({ googleId: profile.id });
+
         if (currUser) {
-          done(null, currUser);
+          return done(null, currUser);
         }
-      });
-      const index = profile.displayName.indexOf("(");
-      const username = profile.displayName.slice(0, index).replace(/\s+/g, "");
-      User.create({
-        googleId: profile.id,
-        name: username,
-        email: profile.emails[0].value,
-      }).then((user) => {
-        done(null, user);
-      });
+
+        const index = profile.displayName.indexOf("(");
+        const username =
+          index !== -1
+            ? profile.displayName.slice(0, index).replace(/\s+/g, "")
+            : profile.displayName.replace(/\s+/g, "");
+
+        console.log(profile);
+
+        currUser = await User.create({
+          googleId: profile.id,
+          name: username,
+          email: profile.emails[0].value,
+        });
+
+        done(null, currUser);
+      } catch (err) {
+        console.error(err);
+        done(err, null);
+      }
     },
   ),
 );
@@ -47,20 +59,26 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: "/api/v1/auth/github/redirect",
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // it will execute before redirect
-      User.findOne({ githubId: profile.id }).then((currUser) => {
+      try {
+        let currUser = await User.findOne({ githubId: profile.id });
+
         if (currUser) {
-          done(null, currUser);
+          return done(null, currUser);
         }
-      });
-      User.create({
-        githubId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
-      }).then((user) => {
-        done(null, user);
-      });
+
+        currUser = await User.create({
+          githubId: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+        });
+
+        done(null, currUser);
+      } catch (err) {
+        console.error(err);
+        done(err, null);
+      }
     },
   ),
 );

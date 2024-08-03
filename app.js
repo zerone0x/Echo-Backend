@@ -81,7 +81,10 @@ const Port = process.env.PORT || 8080;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    // const deletedBookMarks = await Comment.deleteMany({});
+    // const user = await User.find({name:"xx"});
+    // console.log(user);
+
+    // const deletedBookMarks = await User.deleteMany({name:"zerone0x"});
     // console.log(`Deleted ${deletedBookMarks.deletedCount} bookmarks.`);
 
     // // 删除Likes集合中的所有数据
