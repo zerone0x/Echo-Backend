@@ -44,14 +44,6 @@ const BookMarkFeed = async (req, res) => {
     } else {
       feedDetails = await Feeds.findById(feedId);
     }
-    const feedUser = feedDetails?.user;
-    await Notification.create({
-      sender: userId,
-      receiver: feedUser,
-      content: feedId,
-      type: itemType,
-      action: ActionEnum.BOOKMARK,
-    });
     sendSuccess(
       res,
       StatusCodes.CREATED,

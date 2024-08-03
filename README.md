@@ -9,10 +9,6 @@
 
 Welcome to Echo Social BackEnd, a Mastodon-like platform that amplifies your voice in the digital realm!
 
-### 🚧 Under Construction
-
-Please note that Echo Social is still in active development.
-
 ## About Echo Social
 
 Echo Social is designed to be a social networking platform where users can freely express themselves, connect with others, and create vibrant communities. Inspired by Mastodon, it aims to provide a user-centric experience.
@@ -22,7 +18,7 @@ Echo Social is designed to be a social networking platform where users can freel
 - 📝 Post Feeds: Share your thoughts with text and images.
 - 💬 Comments: Engage in discussions through post comments.
 - 👤 Profile Setup: Customize your profile to reflect your personality.
-- 🔐 OAuth 2.0: Secure authentication for user accounts.
+- 🔐 JWT Auth: Secure authentication for user accounts.
 - 🔍 Search: Find feeds, users, and comments easily.
 - 👥 Follow Others: Stay updated with content from people you're interested in.
 - 🔖 Bookmark: Save your favorite feeds and comments for later.

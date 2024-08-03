@@ -95,7 +95,6 @@ const start = async () => {
     // );
     const feedCount = await Feeds.countDocuments({});
     const notificationsCount = await Notification.countDocuments({});
-    console.log(process.env.NODE_ENV);
     console.log(`Total feeds: ${feedCount}`);
     console.log(`Notifications Count: ${notificationsCount}`);
     // console.log(result); // This will log the outcome of the update operation

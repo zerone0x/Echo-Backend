@@ -41,13 +41,16 @@ const LikeFeed = async (req, res) => {
       feedDetails = await Comment.findById(feedId);
     }
     const feedUser = feedDetails.user;
-    await Notification.create({
-      sender: userId,
-      receiver: feedUser,
-      content: feedId,
-      type: itemType,
-      action: ActionEnum.LIKE,
-    });
+    if (userId != feedUser) {
+      await Notification.create({
+        sender: userId,
+        receiver: feedUser,
+        content: feedId,
+        type: itemType,
+        action: ActionEnum.LIKE,
+      });
+    }
+
     sendSuccess(
       res,
       StatusCodes.CREATED,
