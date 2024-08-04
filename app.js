@@ -84,7 +84,7 @@ const start = async () => {
     // const user = await User.find({name:"xx"});
     // console.log(user);
 
-    // const deletedBookMarks = await User.deleteMany({name:"zerone0x"});
+    // const deletedBookMarks = await User.deleteMany({receiver==sender});
     // console.log(`Deleted ${deletedBookMarks.deletedCount} bookmarks.`);
 
     // // 删除Likes集合中的所有数据
