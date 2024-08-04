@@ -34,7 +34,7 @@ To get a local copy up and running follow these simple steps:
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/zerone0x/Echo-Frontend.git
+   git clone https://github.com/zerone0x/Echo-Backend.git
    ```
 2. Install npm packages
    ```sh
