@@ -8,9 +8,6 @@
 ## Echo Social App
 
 Welcome to Echo Social BackEnd, a Mastodon-like platform that amplifies your voice in the digital realm!
-<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
-    <iframe src="https://res.cloudinary.com/curbyouraction/video/upload/v1722782562/EchoDemoVideo.mp4" style="position:absolute; top:0; left:0; width:100%; height:100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
 
 ## About Echo Social
 
