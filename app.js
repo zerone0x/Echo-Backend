@@ -3,7 +3,6 @@ require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
-const passport = require("passport");
 const morgan = require("morgan");
 const connectDB = require("./db/connect");
 const authRouter = require("./routes/authRoute");
@@ -17,12 +16,6 @@ const notificationRouter = require("./routes/notificationRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
-const multer = require("multer");
-// const proxy = require("./middlewares/proxy");
-// // passport
-// app.use(passport.initialize())
-// app.use(passport.session())
-const initPassport = require("./strategies/local-strategy");
 
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
@@ -67,7 +60,6 @@ app.get("/", (req, res) => {
   res.send("ECHO BackEnd");
 });
 
-// app.use('/api', proxy);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/feeds", feedRouter);
@@ -84,8 +76,11 @@ const start = async () => {
     // const user = await User.find({name:"xx"});
     // console.log(user);
 
-    // const deletedBookMarks = await User.deleteMany({receiver==sender});
-    // console.log(`Deleted ${deletedBookMarks.deletedCount} bookmarks.`);
+    // const deletedNotifications = await Notification.deleteMany({
+    //   $expr: { $eq: ["$receiver", "$sender"] }
+    // });
+    
+    // console.log(`Deleted ${deletedNotifications.deletedCount} bookmarks.`);
 
     // // 删除Likes集合中的所有数据
     // const deletedLikes = await Likes.deleteMany({});

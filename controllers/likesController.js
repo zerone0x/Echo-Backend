@@ -7,6 +7,26 @@ const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 const Notification = require("../models/Notification");
 const { ActionEnum } = require("../utils/data");
 
+const GetCountOfLikes = async (req, res) => {
+  try {
+    const feedId = req.params.feedId;
+    const itemType = req.params.itemType;
+    const likeCount = await Likes.countDocuments({
+      bookmarkedItem: feedId,
+      type: itemType,
+    });
+
+    sendSuccess(
+      res,
+      StatusCodes.OK,
+      likeCount,
+      `get count of ${itemType} likes`,
+    );
+  } catch (error) {
+    sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
+  }
+};
+
 const LikeFeed = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -112,4 +132,5 @@ module.exports = {
   CreateLikesComment,
   getIsLiked,
   getAllLikesByUserId,
+  GetCountOfLikes,
 };
