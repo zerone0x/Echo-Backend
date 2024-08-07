@@ -17,7 +17,7 @@ const createFeeds = async (req, res) => {
       imageUrls = req.files.map((file) => file.path);
     }
     req.body.user = req.user.userId;
-    req.body.feedImages = imageUrls;
+    req.body.feedImages = imageUrls.length > 0 ? imageUrls: req.body.feedImages;
     const type = req.body.type;
     let result;
     if (type === "Feed") {

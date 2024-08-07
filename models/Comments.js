@@ -5,7 +5,7 @@ const CommentSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true,
-      maxlength: [170, "Content should be less than 170 characters"],
+      maxlength: [700, "Content should be less than 700 characters"],
     },
     user: {
       type: mongoose.Types.ObjectId,

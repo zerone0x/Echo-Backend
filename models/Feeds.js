@@ -5,7 +5,7 @@ const FeedsSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true,
-      maxlength: [1000, "Content should be less than 1000 characters"],
+      maxlength: [700, "Content should be less than 700 characters"],
     },
     user: {
       type: mongoose.Types.ObjectId,

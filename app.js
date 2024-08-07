@@ -3,6 +3,7 @@ require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
+const passport = require("passport");
 const morgan = require("morgan");
 const connectDB = require("./db/connect");
 const authRouter = require("./routes/authRoute");
@@ -16,6 +17,7 @@ const notificationRouter = require("./routes/notificationRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
+const initPassport = require("./strategies/local-strategy");
 
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware

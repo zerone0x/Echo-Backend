@@ -18,7 +18,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://echoloop.vercel.app/api/v1/auth/google/redirect",
+      callbackURL: "http://echoloop.netlify.app/api/v1/auth/google/redirect",
     },
     async (accessToken, refreshToken, profile, done) => {
       // it will execute before redirect
@@ -57,7 +57,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://echoloop.vercel.app/api/v1/auth/github/redirect",
+      callbackURL: "http://echoloop.netlify.app/api/v1/auth/github/redirect",
     },
     async (accessToken, refreshToken, profile, done) => {
       // it will execute before redirect
