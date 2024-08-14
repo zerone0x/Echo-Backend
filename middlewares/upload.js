@@ -13,7 +13,7 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     return {
       folder: "EchoAPP",
-      allowedFormats: ["jpeg", "png", "jpg", "gif"],
+      allowedFormats: ["jpeg", "png", "jpg"],
       public_id: `${req.user.userId}-${Date.now()}`,
     };
   },

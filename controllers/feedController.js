@@ -9,6 +9,7 @@ const BookMark = require("../models/BookMark");
 const Likes = require("../models/Likes");
 const paginate = require("../utils/paginate");
 const Notification = require("../models/Notification");
+const { ActionEnum } = require("../utils/data");
 
 const createFeeds = async (req, res) => {
   try {
@@ -16,8 +17,10 @@ const createFeeds = async (req, res) => {
     if (req.files && req.files.length > 0) {
       imageUrls = req.files.map((file) => file.path);
     }
-    req.body.user = req.user.userId;
-    req.body.feedImages = imageUrls.length > 0 ? imageUrls: req.body.feedImages;
+    const userId = req.user.userId;
+    req.body.user = userId;
+    req.body.feedImages =
+      imageUrls.length > 0 ? imageUrls : req.body.feedImages;
     const type = req.body.type;
     let result;
     if (type === "Feed") {
@@ -27,6 +30,16 @@ const createFeeds = async (req, res) => {
       result = await Comment.create(req.body);
       const feedsId = req.body.feed;
       await Feeds.findByIdAndUpdate(feedsId, { $inc: { commentsCount: 1 } });
+      const feedUser = await Feeds.findById(feedsId);
+      if (userId !== feedUser.user) {
+        await Notification.create({
+          sender: userId,
+          receiver: feedUser.user,
+          action: ActionEnum.COMMENT,
+          content: result._id,
+          type: type,
+        });
+      }
     }
     sendSuccess(
       res,

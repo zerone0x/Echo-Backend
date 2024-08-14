@@ -20,9 +20,7 @@ const getAllUsers = async (req, res) => {
 const getUserByName = async (req, res) => {
   try {
     const username = req.params.username;
-    const user = await User.findOne({ name: username }).select(
-      "-password",
-    );
+    const user = await User.findOne({ name: username }).select("-password");
     sendSuccess(res, StatusCodes.OK, user, "This user fetched successfully");
   } catch (error) {
     sendFail(res, StatusCodes.UNAUTHORIZED, error.message, error.message);

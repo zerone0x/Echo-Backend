@@ -25,7 +25,7 @@ const BookMarkSchema = new mongoose.Schema(
 );
 
 BookMarkSchema.pre(
-  "deleteOne",
+  "findOneAndDelete",
   { document: false, query: true },
   async function (next) {
     const query = this.getQuery();

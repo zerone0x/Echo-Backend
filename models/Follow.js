@@ -20,7 +20,7 @@ const FollowSchema = new mongoose.Schema(
 );
 
 FollowSchema.pre(
-  "deleteOne",
+  "findOneAndDelete",
   { document: false, query: true },
   async function (next) {
     const query = this.getQuery();
