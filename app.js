@@ -77,6 +77,10 @@ const start = async () => {
     await connectDB(process.env.MONGO_URI);
     const feedCount = await Feeds.countDocuments({});
     const notificationsCount = await Notification.countDocuments({});
+    //    const deletedNotifications = await Notification.deleteMany({
+    //   $expr: { $eq: ["$receiver", "$sender"] }
+    // });
+
     console.log(`Total feeds: ${feedCount}`);
     console.log(`Notifications Count: ${notificationsCount}`);
     app.listen(Port, console.log(`Server running on port ${Port}`));

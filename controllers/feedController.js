@@ -31,7 +31,8 @@ const createFeeds = async (req, res) => {
       const feedsId = req.body.feed;
       await Feeds.findByIdAndUpdate(feedsId, { $inc: { commentsCount: 1 } });
       const feedUser = await Feeds.findById(feedsId);
-      if (userId !== feedUser.user) {
+
+      if (userId !== feedUser.user.toString()) {
         await Notification.create({
           sender: userId,
           receiver: feedUser.user,
