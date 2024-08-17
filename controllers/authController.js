@@ -10,14 +10,14 @@ const { sendSuccess, sendFail } = require("../utils/FormatResponse");
 
 const register = async (req, res) => {
   try {
-    const { email, name, password } = req.body;
+    const { email, name, password, username } = req.body;
     const ifEmailExist = await User.findOne({ email });
     if (ifEmailExist) {
       throw new CustomError.BadRequestError("Email already exist");
     }
     const isFirstUser = (await User.countDocuments({})) === 0;
     const role = isFirstUser ? "admin" : "user";
-    const user = await User.create({ email, name, password, role });
+    const user = await User.create({ email, name, password, role, username });
     const tokenUser = createTokenUser(user);
     const token = attachCookiesToResponse({ res, user: tokenUser });
     const resUser = { user: user, tokenUser: tokenUser, token: token };

@@ -18,7 +18,7 @@ const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
 const initPassport = require("./strategies/local-strategy");
-
+const rateLimit = require('express-rate-limit');
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -72,14 +72,12 @@ app.use("/api/v1/follow", followRouter);
 app.use("/api/v1/notification", notificationRouter);
 
 const Port = process.env.PORT || 8080;
+
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
     const feedCount = await Feeds.countDocuments({});
     const notificationsCount = await Notification.countDocuments({});
-    //    const deletedNotifications = await Notification.deleteMany({
-    //   $expr: { $eq: ["$receiver", "$sender"] }
-    // });
 
     console.log(`Total feeds: ${feedCount}`);
     console.log(`Notifications Count: ${notificationsCount}`);

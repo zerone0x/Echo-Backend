@@ -12,14 +12,27 @@ const {
 } = require("../controllers/feedController");
 const checkFileSize = require("../middlewares/checkFileSize");
 const upload = require("../middlewares/upload");
+const rateLimit = require('express-rate-limit');
 const {
   authenticateUser,
   authorizePermission,
 } = require("../middlewares/authentication");
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  max: 5, // 每个用户每15分钟最多允许5次请求
+ 
+});
+
 router
   .route("/")
-  .post(authenticateUser, upload.array("image", 4), checkFileSize, createFeeds)
+  .post(
+    authenticateUser, 
+    limiter, 
+    upload.array("image", 4), 
+    checkFileSize, 
+    createFeeds
+  )
   .get(getAllFeeds);
 
 router.route("/user/:username").get(getFeedByUsername);
