@@ -19,6 +19,14 @@ const FollowSchema = new mongoose.Schema(
   },
 );
 
+FollowSchema.pre("save", async function (next) {
+  if (this.followed.equals(this.follower)) {
+    const err = new Error("You cannot follow yourself.");
+    return next(err);
+  }
+  next();
+});
+
 FollowSchema.pre(
   "findOneAndDelete",
   { document: false, query: true },

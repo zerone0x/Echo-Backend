@@ -23,6 +23,25 @@ const LikesSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+LikesSchema.pre("save", async function (next) {
+  try {
+    const existingLike = await mongoose.model("Likes").findOne({
+      user: this.user,
+      bookmarkedItem: this.bookmarkedItem,
+      type: this.type,
+    });
+
+    if (existingLike) {
+      const err = new Error("This like already exists.");
+      return next(err);
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 LikesSchema.pre(
   "findOneAndDelete",
   { document: false, query: true },

@@ -26,6 +26,7 @@ const errorMiddleware = require("./middlewares/error-handler");
 const User = require("./models/User");
 const Feeds = require("./models/Feeds");
 const BookMark = require("./models/BookMark");
+const Follow = require('./models/Follow')
 const Likes = require("./models/Likes");
 const Notification = require("./models/Notification");
 const Comment = require("./models/Comments");
