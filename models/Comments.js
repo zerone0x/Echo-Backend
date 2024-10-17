@@ -38,6 +38,12 @@ const CommentSchema = new mongoose.Schema(
 CommentSchema.pre("save", function (next) {
   if (!this.content && !this.feedImage) {
     next(new Error("Please provide either content or an image"));
+  } else if (
+    this.content === "hihi" ||
+    this.content === "okay" ||
+    this.content === "hi"
+  ) {
+    next(new Error("There are forbidden words, sorry"));
   } else {
     next();
   }

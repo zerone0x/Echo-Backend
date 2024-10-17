@@ -18,7 +18,7 @@ const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
 const initPassport = require("./strategies/local-strategy");
-const rateLimit = require('express-rate-limit');
+const rateLimit = require("express-rate-limit");
 // middlewares
 // Attention: notFoundMiddleware should be placed in the front of errorMiddleware
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -26,7 +26,7 @@ const errorMiddleware = require("./middlewares/error-handler");
 const User = require("./models/User");
 const Feeds = require("./models/Feeds");
 const BookMark = require("./models/BookMark");
-const Follow = require('./models/Follow')
+const Follow = require("./models/Follow");
 const Likes = require("./models/Likes");
 const Notification = require("./models/Notification");
 const Comment = require("./models/Comments");

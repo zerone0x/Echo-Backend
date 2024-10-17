@@ -117,16 +117,15 @@ UserSchema.pre(
   },
 );
 
-UserSchema.statics.updatePassword = async function(email, newPassword) {
+UserSchema.statics.updatePassword = async function (email, newPassword) {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(newPassword, salt);
 
   return this.updateOne(
     { email: email },
-    { $set: { password: hashedPassword } }
+    { $set: { password: hashedPassword } },
   );
 };
-
 
 UserSchema.methods.comparePassword = async function (Password) {
   if (this.googleId || this.githubId) {
