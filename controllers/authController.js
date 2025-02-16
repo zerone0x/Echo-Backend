@@ -25,7 +25,7 @@ const register = async (req, res) => {
       res,
       StatusCodes.CREATED,
       resUser,
-      "Your account registered successfully",
+      "Your account registered successfully"
     );
   } catch (error) {
     sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
@@ -37,19 +37,19 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
       throw new CustomError.BadRequestError(
-        "Please provide email and password",
+        "Please provide email and password"
       );
     }
     const user = await User.findOne({ email });
     if (!user) {
       throw new CustomError.UnauthenticatedError(
-        "Invalid Credentials of email",
+        "Invalid Credentials of email"
       );
     }
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       throw new CustomError.UnauthenticatedError(
-        "Invalid Credentials of password",
+        "Invalid Credentials of password"
       );
     }
     const tokenUser = createTokenUser(user);
@@ -59,7 +59,7 @@ const login = async (req, res) => {
       res,
       StatusCodes.CREATED,
       resUser,
-      "Your account logined successfully",
+      "Your account logined successfully"
     );
   } catch (error) {
     sendFail(res, StatusCodes.INTERNAL_SERVER_ERROR, null, error.message);
@@ -76,7 +76,7 @@ const RedirectGoogle = (req, res) => {
     res.redirect(
       process.env.NODE_ENV === "PRD"
         ? process.env.FE_URL
-        : process.env.FE_STG_URL,
+        : process.env.FE_STG_URL
     );
   } else {
     res.send(req.user);
@@ -93,7 +93,7 @@ const RedirectGithub = async (req, res) => {
     res.redirect(
       process.env.NODE_ENV === "PRD"
         ? process.env.FE_URL
-        : process.env.FE_STG_URL,
+        : process.env.FE_STG_URL
     );
   } else {
     res.send(req.user);
