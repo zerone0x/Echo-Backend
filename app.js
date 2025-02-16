@@ -2,7 +2,7 @@ require("dotenv").config();
 // apply try catch to async func automatically
 require("express-async-errors");
 const express = require("express");
-const app = express();
+const { app, server } = require("./utils/socket");
 const passport = require("passport");
 const morgan = require("morgan");
 const connectDB = require("./db/connect");
@@ -14,6 +14,8 @@ const bookmarkRouter = require("./routes/bookmarkRoute");
 const likesRouter = require("./routes/likesRoute");
 const followRouter = require("./routes/followRoute");
 const notificationRouter = require("./routes/notificationRoute");
+const msgRouter = require("./routes/messageRoute");
+const conversationRouter = require("./routes/conversationRoute");
 const cookieParser = require("cookie-parser");
 const expressSession = require("express-session");
 const cors = require("cors");
@@ -30,6 +32,7 @@ const Follow = require("./models/Follow");
 const Likes = require("./models/Likes");
 const Notification = require("./models/Notification");
 const Comment = require("./models/Comments");
+const Conversation = require("./models/Conversation");
 const corsOptions = {
   origin: [process.env.FE_ORIGIN, process.env.FE_STG_ORIGIN],
   credentials: true,
@@ -49,7 +52,7 @@ app.use(
     },
     resave: false,
     saveUninitialized: true,
-  }),
+  })
 );
 
 // log the requests
@@ -71,7 +74,8 @@ app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/bookmark", bookmarkRouter);
 app.use("/api/v1/follow", followRouter);
 app.use("/api/v1/notification", notificationRouter);
-
+app.use("/api/v1/message", msgRouter);
+app.use("/api/v1/conversation", conversationRouter);
 const Port = process.env.PORT || 8080;
 
 const start = async () => {
@@ -82,7 +86,7 @@ const start = async () => {
 
     console.log(`Total feeds: ${feedCount}`);
     console.log(`Notifications Count: ${notificationsCount}`);
-    app.listen(Port, console.log(`Server running on port ${Port}`));
+    server.listen(Port, console.log(`Server running on port ${Port}`));
   } catch (error) {
     console.error(error);
   }
