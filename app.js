@@ -46,7 +46,7 @@ app.use(
     secret: process.env.SESSION_KEY,
     cookie: {
       maxAge: 3000,
-      secure: process.env.NODE_ENV === "PRD",
+      secure: true,
       sameSite: "None",
       partitioned: true,
     },
